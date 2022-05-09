@@ -35,14 +35,10 @@
   </div>
   <% content_for :right do %>
     <div>
-      <% if defined?(filter) %>
 
-      <% filter.each do %>
+       <%= render :partial => '/shared/filters', :locals => {model: records.model} %>
 
-      <% end %>
-      <% else %>
 
-      <% end %>
     </div>
   <% end %>
 </div>

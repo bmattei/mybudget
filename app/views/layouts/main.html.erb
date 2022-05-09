@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= yield :title %> </title>
+    <title><%= yield :title %>
+    </title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -23,22 +24,22 @@
       </div>
     </header>
     <div class="container mx-auto">
-    <div class="flex flex-row flex-wrap py-4">
+      <div class="flex flex-row flex-wrap py-4">
 
         <main role="main" class="w-full  pt-1 px-2 ml-10">
-          <div class="relative " >
-            <div class="absolute w-3/4"
+          <div class="flex flex-row ">
+            <div class="w-2/3">
               <%= yield %>
               <%= turbo_frame_tag "modal" %>
             </div>
-            <div class="absolute right-0">
+
+            <div class="w-1/4 mx-5">
               <%= yield :right %>
             </div>
           </div>
 
-
         </main>
+      </div>
     </div>
-</div>
   </body>
 </html>
