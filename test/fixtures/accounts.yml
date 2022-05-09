@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+dcu_checking:
+  name: DcuChecking
+  number: 29900000
+  bank: DCU
+  has_checking: true
+
+dcu_savings:
+  name: DcuSavings
+  number: 29900011
+  bank: DCU
+  has_checking: false
+
+dcu_long_term:
+  name: DcuLongTermSavings
+  number: 29900022
+  bank: Dcu
+  has_checking: false

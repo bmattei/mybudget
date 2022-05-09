@@ -1,0 +1,48 @@
+<div class="table table-auto w-full">
+  <div class="table-header-group">
+    <div class="table-row bg-blue-100">
+      <% columns.each do |column| %>
+        <div class="table-cell px-2 py-4 test-left font-bold">
+          <%# Code shows arrows when data is sorted b a column %>
+          <%= sort_indicator if params[:column] == column %>
+          <%= sort_link(column.gsub('_', ' ').titleize, column) %>
+        </div>
+      <% end %>
+      <div class="table-cell px-2 py-4 text-transparent">EDIT</div>
+      <div class="table-cell px-2 py-4 text-transparent">DELETE</div>
+
+
+    </div>
+  </div>
+
+  <div class="table-row-group">
+    <% records.each do |record| %>
+      <div class="table-row even:bg-blue-100">
+        <% columns.each do |column| %>
+          <div class="table-cell overflow-y-scroll px-2 py-1" >
+            <%= record.send(column) %>
+          </div>
+        <% end %>
+        <div class="table-cell">
+          <%= link_to 'edit', url_for([:edit, record]), data: {turbo_frame: "_top"}, class: "btn-small"%>
+        </div>
+        <div class="table-cell">
+         <%= link_to 'delete', url_for(record), method: :delete,  data: {turbo_frame: "_top",  turbo_method: :delete, turbo_confirm: "This will delete account and all it's transactons. Are you sure?"}, class: "btn-small" %>
+        </div>
+      </div>
+    <% end %>
+
+  </div>
+  <% content_for :right do %>
+    <div>
+      <% if defined?(filter) %>
+
+      <% filter.each do %>
+
+      <% end %>
+      <% else %>
+
+      <% end %>
+    </div>
+  <% end %>
+</div>
