@@ -18,7 +18,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_05_07_143534) do
     t.string "name"
     t.string "number"
     t.string "bank"
-    t.boolean "has_checking"
+    t.boolean "has_checking", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

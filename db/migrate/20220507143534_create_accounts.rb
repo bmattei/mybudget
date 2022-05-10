@@ -4,7 +4,7 @@ class CreateAccounts < ActiveRecord::Migration[7.0]
       t.string :name
       t.string :number
       t.string :bank
-      t.boolean :has_checking
+      t.boolean :has_checking, default: false
 
       t.timestamps
     end

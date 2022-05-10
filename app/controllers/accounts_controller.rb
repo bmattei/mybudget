@@ -4,7 +4,12 @@ class AccountsController < ApplicationController
   # GET /accounts or /accounts.json
   def index
     if params[:column] && ["bank", "name", "number", "has_checking"].include?(params[:column])
-     @accounts = Account.filter_by(filtering_params).order("#{params[:column]} #{params[:direction]}")
+     if Account.columns_hash[params[:column]].type == :string
+       @accounts = Account.filter_by(filtering_params).order("lower(#{params[:column]}) #{params[:direction]}")
+     else
+       @accounts = Account.filter_by(filtering_params).order("#{params[:column]} #{params[:direction]}")
+     end
+
     else
       @accounts = Account.filter_by(filtering_params)
     end
@@ -61,6 +66,12 @@ class AccountsController < ApplicationController
     end
   end
 
+  def allowed_filters
+      return {name_contains: {column: :name, type: :text, label: :name},
+              bank_contains: {column: :bank, type: :text,label: :bank},
+              number_contains: {coumn: :number, type: :text, label: :number}}
+  end
+  helper_method :allowed_filters
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_account
@@ -68,7 +79,7 @@ class AccountsController < ApplicationController
     end
 
     def filtering_params
-       params.slice(*Account.filter_scopes)
+       params.slice(*(allowed_filters.keys))
     end
 
     # Only allow a list of trusted parameters through.

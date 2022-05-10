@@ -2,11 +2,20 @@
   <div class="-mx-3 md:flex mb-6">
     <div class="px-3 mb-6 md:mb-0">
       <%= form_with action: :index, method: :get do |form| %>
-        <% model.filter_scopes.each do |f| %>
+        <% allowed_filters.each do |filter, values| %>
+          <% case values[:type] %>
+          <% when :text %>
           <div class="my-5">
-            <%= form.label f, class:"" %>
-            <%= form.text_field f, value: params[f].to_s, class:"" %>
+            <%= form.label filter, values[:label] %>
+            <%= form.text_field filter, value: params[filter]%>
           </div>
+          <% when :boolean %>
+          <div class="my-5">
+            <%= form.label filter, values[:label] %>
+            <%= form.check_box filter, value: params[filter] %>
+          </div>
+
+          <% end %>
         <% end %>
 
       <div class="inline">

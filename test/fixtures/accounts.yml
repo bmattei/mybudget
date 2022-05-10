@@ -17,3 +17,24 @@ dcu_long_term:
   number: 29900022
   bank: Dcu
   has_checking: false
+
+sort_me1:
+  name: AA
+  number: A9090900
+  bank: A_BANK
+
+sort_me2:
+  name: BB
+  number: B9090900
+  bank: B_BANK
+
+sort_me2:
+  name: CC
+  number: B9090900
+  bank: C_BANK
+
+filter_me:
+  name: OnlyMe
+  number: 09090889898989898989898989898
+  bank: WeirdBank
+  has_checking: true
