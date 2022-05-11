@@ -2,15 +2,14 @@
   <div class="table-header-group">
     <div class="table-row bg-blue-100">
       <% columns.each do |column| %>
-        <div class="table-cell px-2 py-4 test-left font-bold">
-          <%# Code shows arrows when data is sorted b a column %>
-          <%= sort_indicator if params[:column] == column %>
-          <%= sort_link(column.gsub('_', ' ').titleize, column) %>
-        </div>
+        <div class="table-cell px-2 py-4 test-left font-bold inline">
+          <%# Code shows arrows 2when data is sorted b a column %>
+            <%= sort_indicator if params[:column] == column %>
+            <%= sort_link(column.gsub('_', ' ').titleize, column) %>
+       </div>
       <% end %>
       <div class="table-cell px-2 py-4 text-transparent">EDIT</div>
       <div class="table-cell px-2 py-4 text-transparent">DELETE</div>
-
 
     </div>
   </div>
@@ -20,7 +19,12 @@
       <div class="table-row even:bg-blue-100">
         <% columns.each do |column| %>
           <div class="table-cell overflow-y-scroll px-2 py-1" >
-            <%= record.send(column) %>
+            <% value = record.send(column) %>
+            <%if value.class.ancestors.include?(ActiveRecord::Base)%>
+              <%= value.name %>
+            <% else %>
+              <%= value %>
+            <% end %>
           </div>
         <% end %>
         <div class="table-cell">

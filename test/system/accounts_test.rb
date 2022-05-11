@@ -35,6 +35,33 @@ class AccountsTest < ApplicationSystemTestCase
     assert_text number
   end
 
+  test "should get an error if you attempt to create account without bank" do
+    visit accounts_url
+    name = "NoBankAccount"
+    number = "NoBank_123"
+    click_on "New account"
+    fill_in "Name", with: name
+    fill_in "Number", with:number
+    click_on "Create Account"
+    assert_text "Bank can't be blank"
+
+  end
+
+  test "Should be able to cancel a create" do
+    visit accounts_url
+    name = "CancelAccount"
+    number = "CancelNumber123"
+    bank = "CancelBank"
+    click_on "New account"
+    fill_in "Name", with: name
+    fill_in "Number", with:number
+    fill_in "Bank", with:bank
+    click_on "Cancel"
+    assert current_url, accounts_url
+    assert_text name, count:0
+    assert_text number, count:0
+    assert_text bank, count:0
+  end
   test "should update Account" do
     visit account_url(@account)
     click_on "Edit this account", match: :first

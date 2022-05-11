@@ -3,15 +3,10 @@ class AccountsController < ApplicationController
 
   # GET /accounts or /accounts.json
   def index
-    if params[:column] && ["bank", "name", "number", "has_checking"].include?(params[:column])
-     if Account.columns_hash[params[:column]].type == :string
-       @accounts = Account.filter_by(filtering_params).order("lower(#{params[:column]}) #{params[:direction]}")
-     else
-       @accounts = Account.filter_by(filtering_params).order("#{params[:column]} #{params[:direction]}")
-     end
 
-    else
-      @accounts = Account.filter_by(filtering_params)
+    @accounts = Account.filter_by(filtering_params)
+    if params[:column] && ["bank", "name", "number", "has_checking"].include?(params[:column])
+       @accounts = @accounts.order("#{params[:column]} #{params[:direction]}")
     end
   end
 

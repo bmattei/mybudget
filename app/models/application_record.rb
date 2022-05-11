@@ -11,15 +11,15 @@ class ApplicationRecord < ActiveRecord::Base
         verb = Regexp.last_match(2)
         case verb
         when 'matches'
-          filter = filter.where("lower(#{column}) = ?)", value.downcase)
+          filter = filter.where("#{column} = ?)", value)
         when 'begins'
-          filter = filter.where("lower(#{column}) like ?", "#{value.downcase}%")
+          filter = filter.where("#{column} like ?", "#{value}%")
         when 'ends'
-          filter = filter.where("lower(#{column}) like ?", "%#{value.downcase}")
+          filter = filter.where("#{column} like ?", "%#{value}")
         when 'between'
           filter = filter.where("#{column} >= ? and #{column} <= ?", value[0], value[1])
         when 'contains'
-          filter = filter.where("lower(#{column}) like ?", "%#{value.downcase}%")
+          filter = filter.where("#{column} like ?", "%#{value}%")
         end
       end
     end
