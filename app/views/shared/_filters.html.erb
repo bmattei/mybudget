@@ -1,33 +1,33 @@
-<% if allowed_filters.length > 0 %>
-
-<div class="bg-blue-100 shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col my-2">
-  <div class="-mx-3 md:flex mb-6">
-    <div class="px-3 mb-6 md:mb-0">
-      <%= form_with action: :index, method: :get do |form| %>
-        <% allowed_filters.each do |filter, values| %>
-          <% case values[:type] %>
-          <% when :text %>
+<% if model.filter_scopes.count > 0  %>
+  <div class="bg-blue-100 shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col my-2">
+    <div class="-mx-3 md:flex mb-6">
+      <div class="px-3 mb-6 md:mb-0">
+        <%= form_with action: :index, method: :get do |form| %>
+        <% model.filter_scopes.each do |filter| %>
           <div class="my-5">
-            <%= form.label filter, values[:label] %>
-            <%= form.text_field filter, value: params[filter]%>
+            <%= form.label filter, filter.to_s.gsub('_', ' ').titleize %>
+            <% case model.filter_types[filter] %>
+              <% when :boolean %>
+                <%= form.check_box filter, value: params[filter] %>
+              <% when :integer %>
+                <%= form.number_field filter, value: params[filter], step: 1 %>
+              <% when :money %>
+                <%= form.number_field filter, value: params[filter],step: 0.5 %>
+              <% when :date %>
+                <%= form.date_field filter, value: params[filter] %>
+              <% else %>
+                  <%= form.text_field filter, value: params[filter]%>
+              <% end %>
           </div>
-          <% when :boolean %>
-          <div class="my-5">
-            <%= form.label filter, values[:label] %>
-            <%= form.check_box filter, value: params[filter] %>
-          </div>
-
-          <% end %>
         <% end %>
-
-      <div class="inline">
-        <%= form.submit "Filter", class: "btn-small" %>
+          <div class="inline">
+            <%= form.submit "Filter", class: "btn-small" %>
+          </div>
+          <div class="inline">
+              <%= link_to "Clear Filters", model, class: "btn-small" %>
+          </div>
+        <% end %>
       </div>
-      <div class="inline">
-        <%= link_to "Clear Filters", model, class: "btn-small" %>
-      </div>
-    <% end %>
+    </div>
   </div>
-</div>
-</div>
 <%end%>

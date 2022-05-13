@@ -1,13 +1,19 @@
 class AccountsController < ApplicationController
   before_action :set_account, only: %i[ show edit update destroy ]
 
+  def display_columns
+        return [{model_method: "bank", column: "bank", label: "bank"}, {model_method: "name", column: "name", label: "name" },
+                {model_method: "number", column: "number", label: "Number"},
+                {model_method: "has_checking", column: "has_checking", label: "Checking"}]
+  end
+  helper_method :display_columns
+  private def filtering_params
+    params.slice(*Account.filter_scopes)
+  end
+
   # GET /accounts or /accounts.json
   def index
-
-    @accounts = Account.filter_by(filtering_params)
-    if params[:column] && ["bank", "name", "number", "has_checking"].include?(params[:column])
-       @accounts = @accounts.order("#{params[:column]} #{params[:direction]}")
-    end
+       @accounts = Account.filter_by(filtering_params).order("#{params[:column]} #{params[:direction]}")
   end
 
   # GET /accounts/1 or /accounts/1.json
@@ -61,21 +67,14 @@ class AccountsController < ApplicationController
     end
   end
 
-  def allowed_filters
-      return {name_contains: {column: :name, type: :text, label: :name},
-              bank_contains: {column: :bank, type: :text,label: :bank},
-              number_contains: {coumn: :number, type: :text, label: :number}}
-  end
-  helper_method :allowed_filters
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_account
       @account = Account.find(params[:id])
     end
 
-    def filtering_params
-       params.slice(*(allowed_filters.keys))
-    end
+
 
     # Only allow a list of trusted parameters through.
     def account_params

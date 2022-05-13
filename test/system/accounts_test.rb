@@ -11,7 +11,7 @@ class AccountsTest < ApplicationSystemTestCase
     assert_text "Name"
     assert_text "Number"
     assert_text "Bank"
-    assert_text "Has Checking"
+    assert_text "Checking"
     assert_text @account.name
     assert_text @account.number
     assert_text @account.bank
@@ -47,6 +47,18 @@ class AccountsTest < ApplicationSystemTestCase
 
   end
 
+  test "Should be able to edit and account" do
+    visit accounts_url
+    name = "MY NEW NAME"
+    click_on "edit", match: :first
+    old_name = find_field('Name').value
+    fill_in "Name", with: name
+    click_on "Update Account"
+    assert current_url, accounts_url
+    assert_text name
+    assert_text old_name, count:0
+  end
+
   test "Should be able to cancel a create" do
     visit accounts_url
     name = "CancelAccount"
@@ -62,31 +74,17 @@ class AccountsTest < ApplicationSystemTestCase
     assert_text number, count:0
     assert_text bank, count:0
   end
-  test "should update Account" do
-    visit account_url(@account)
-    click_on "Edit this account", match: :first
 
-    name = "MyNewName"
-    number = "A1222222"
-    fill_in "Bank", with: @account.bank
-    check "Has checking" if @account.has_checking
-    fill_in "Name", with: name
-    fill_in "Number", with: number
-    click_on "Update Account"
-
-    assert current_url, accounts_url
-    assert_text "Account was successfully updated"
-    assert_text name
-    assert_text number
-  end
 
   test "should be able to filter by name" do
     visit accounts_url
+
     # This account should be in table to start test
+
     assert_text @account.number
 
     filter_account = accounts(:filter_me)
-    fill_in "name", with: filter_account.name
+    fill_in "Name Contains", with: filter_account.name
     click_on "Filter"
     # this account should now be filtered out
     assert_text @account.number, count: 0
@@ -99,7 +97,7 @@ class AccountsTest < ApplicationSystemTestCase
     assert_text @account.number
 
     filter_account = accounts(:filter_me)
-    fill_in "bank", with: filter_account.bank
+    fill_in "Bank Contains", with: filter_account.bank
     click_on "Filter"
     # this account should now be filtered out
     assert_text @account.number, count: 0
@@ -110,7 +108,7 @@ class AccountsTest < ApplicationSystemTestCase
     # This account should be in table to start test
     assert_text @account.number
     filter_account = accounts(:filter_me)
-    fill_in "number", with: filter_account.number
+    fill_in "Number Contains", with: filter_account.number
     click_on "Filter"
     # this account should now be filtered out
     assert_text @account.number, count: 0
@@ -177,16 +175,16 @@ class AccountsTest < ApplicationSystemTestCase
 
   end
 
-  test "should be able to sort by has_checking" do
+  test "should be able to sort by checking" do
     visit accounts_url
-    click_on "Has Checking"
+    click_on "Checking"
     rows_count = all(".table-row-group>.table-row").count
     last_value = all( ".table-row-group>.table-row:nth-child(1)>.table-cell:nth-child(4)").first.text
     (2..rows_count).each do |i|
          value =  all( ".table-row-group>.table-row:nth-child(#{i})>.table-cell:nth-child(4)").first.text
          assert value >= last_value, "#{value} >= #{last_value}"
     end
-    click_on "Has Checking"
+    click_on "Checking"
     # I think I need this because of turbo
     sleep(3)
 

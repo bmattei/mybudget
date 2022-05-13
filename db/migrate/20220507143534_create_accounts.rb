@@ -1,9 +1,11 @@
 class CreateAccounts < ActiveRecord::Migration[7.0]
   def change
     create_table :accounts do |t|
-      t.string :name
-      t.string :number
-      t.string :bank
+      enable_extension 'citext'
+
+      t.citext :name
+      t.citext :number
+      t.citext :bank
       t.boolean :has_checking, default: false
 
       t.timestamps

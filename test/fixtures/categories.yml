@@ -1,0 +1,30 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+transportation:
+  name: transportation
+
+utilities:
+  name: utilities
+
+misc:
+  name: misc
+
+auto_gas:
+  name: auto_gas
+  category: transportation
+
+auto_maintenance:
+  name: auto_maintenance
+  category: transportation
+
+home_oil:
+  name: home_oil
+  category: utilities
+
+home_electric:
+  name: electric
+  category: utilities
+
+tires:
+  name: tires
+  category: misc

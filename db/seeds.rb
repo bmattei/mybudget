@@ -11,3 +11,12 @@ Account.create([{bank: 'DCU', name: 'DCU_SAVINGS', number: 20345690, has_checkin
                  {bank: 'DCU', name: 'DCU_LONG_TERM', number: 20345692, has_checking: false},
                  {bank: 'Discover', name: 'Discover Card', number: 9566064545, has_checking: true},
               ])
+transportation = Category.create(name:"transportation")
+utilities = Category.create(name:"Utilities")
+
+Category.create([{name: "Auto Insurance", category:transportation},
+                {name: "Gas", category:transportation},
+                {name: "Auto Maintenance", category:transportation},
+                {name: "Heating Oil", category: utilities},
+                {name: "Electric", category: utilities}]
+              )
