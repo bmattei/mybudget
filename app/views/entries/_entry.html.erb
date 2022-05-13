@@ -1,0 +1,47 @@
+<div id="<%= dom_id entry %>">
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Account:</strong>
+    <%= entry.account_id %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Entry date:</strong>
+    <%= entry.entry_date %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Check number:</strong>
+    <%= entry.check_number %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Payee:</strong>
+    <%= entry.payee %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Amount:</strong>
+    <%= entry.amount %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Transfer account:</strong>
+    <%= entry.transfer_account_id %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Transfer entry:</strong>
+    <%= entry.transfer_entry_id %>
+  </p>
+
+  <p class="my-5">
+    <strong class="block font-medium mb-1">Category:</strong>
+    <%= entry.category_id %>
+  </p>
+
+  <% if action_name != "show" %>
+    <%= link_to "Show this entry", entry, class: "rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
+    <%= link_to 'Edit this entry', edit_entry_path(entry), class: "rounded-lg py-3 ml-2 px-5 bg-gray-100 inline-block font-medium" %>
+    <hr class="mt-6">
+  <% end %>
+</div>

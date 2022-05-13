@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_05_10_231719) do
+ActiveRecord::Schema[7.0].define(version: 2022_05_13_125846) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "plpgsql"
@@ -31,4 +31,22 @@ ActiveRecord::Schema[7.0].define(version: 2022_05_10_231719) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "entries", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.date "entry_date"
+    t.integer "check_number"
+    t.citext "payee"
+    t.decimal "amount", precision: 13, scale: 4
+    t.integer "transfer_account_id"
+    t.integer "transfer_entry_id"
+    t.citext "memo"
+    t.bigint "category_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_entries_on_account_id"
+    t.index ["category_id"], name: "index_entries_on_category_id"
+  end
+
+  add_foreign_key "entries", "accounts"
+  add_foreign_key "entries", "categories"
 end
