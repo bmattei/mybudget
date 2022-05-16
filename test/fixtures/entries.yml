@@ -1,21 +1,96 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  account: one
-  entry_date: 2022-05-13
-  check_number: 1
-  payee: 
-  amount: 9.99
-  transfer_account_id: 1
-  transfer_entry_id: 1
-  category: one
+dcu_checking_init:
+  account: dcu_checking
+  entry_date: 2021-01-01
+  check_number: 233
+  amount: 5000.00
+  category: misc_income
 
-two:
-  account: two
-  entry_date: 2022-05-13
-  check_number: 1
-  payee: 
-  amount: 9.99
-  transfer_account_id: 1
-  transfer_entry_id: 1
-  category: two
+dcu_checking_buy_gas_1:
+  account: dcu_checking
+  entry_date: 2021-01-01
+  check_number: 233
+  payee: "Shell"
+  amount: -100
+  category: auto_gas
+
+dcu_checking_buy_gas_2:
+  account: dcu_checking
+  entry_date: 2021-01-01
+  check_number: 233
+  payee: "Shell"
+  amount: -100
+  category: auto_gas
+
+dcu_checking_buy_gas_3:
+  account: dcu_checking
+  entry_date: 2021-02-01
+  check_number: 233
+  payee: "Shell"
+  amount: -100
+  category: auto_gas
+
+dcu_checking_deposit:
+  account: dcu_checking
+  entry_date: 2021-02-02
+  check_number: 233
+  payee: "SweetWater"
+  amount: 500
+  category: income
+
+
+
+init_discover:
+  account: discover
+  entry_date: 2021-01-01
+  check_number: 233
+  amount: -954.89
+  category: misc
+
+
+
+fix_car:
+  account: discover
+  entry_date: 2021-05-29
+  check_number: 101
+  payee: "A1 Auto"
+  amount: -112.00
+  transfer_account_id:
+  transfer_entry_id:
+  category: auto_maintenance
+
+eat_out:
+  account: discover
+  entry_date: 2021-12-05
+  payee: Linguines
+  amount: -85.10
+  category: restaurants
+
+eat_out2:
+  account: discover
+  entry_date: 2022-02-06
+  payee: Chipolte
+  amount: -55.00
+  category: restaurants
+
+eat_out3:
+  account: discover
+  entry_date: 2021-08-11
+  payee: Linguines
+  amount: -85.10
+  category: restaurants
+
+buy_groceries:
+  account: discover
+  entry_date: 2022-02-09
+  payee: Stop & Shop
+  amount: -155.00
+  category: groceries
+
+buy_groceries2:
+  account: discover
+  entry_date: 2022-02-10
+  payee: Market Basket
+  amount: -135.00
+  category: groceries

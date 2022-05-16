@@ -1,9 +1,23 @@
 class EntriesController < ApplicationController
   before_action :set_entry, only: %i[ show edit update destroy ]
+  # before_action :set_account, only: %i[ show edit update destroy ]
 
+  def display_columns
+        return [
+                 {model_method: "account_name", column: "accounts.name", label: "Account"},
+                 {model_method: "category_or_transfer_account", column: "categories.name", label: "Category/Transfer"},
+                 {model_method: "entry_date", column: "entries.entry_date", label: "date" },
+                 {model_method: "check_number", column: "entries.check_number", label: 'check#' },
+                 {model_method: "payee", column: "entries.payee", label: "payee" },
+                 {model_method: "inflow", column: "entries.amount", label: "inflow", as: :money},
+                 {model_method: "outflow", column: "entries.amount", label: "outflow", as: :money},
+                 {model_method: "balance", label: "Balance", as: :money}
+                ]
+  end
+  helper_method :display_columns
   # GET /entries or /entries.json
   def index
-    @entries = Entry.all
+    @entries = Entry.filter_by(filtering_params).joins(:account).left_outer_joins(:category).order("accounts.name asc").order(entry_date: :asc).order("#{params[:column]} #{params[:direction]}")
   end
 
   # GET /entries/1 or /entries/1.json
@@ -21,11 +35,12 @@ class EntriesController < ApplicationController
 
   # POST /entries or /entries.json
   def create
+    pp entry_params
     @entry = Entry.new(entry_params)
 
     respond_to do |format|
       if @entry.save
-        format.html { redirect_to entry_url(@entry), notice: "Entry was successfully created." }
+        format.html { redirect_to entries_url, notice: "Entry was successfully created." }
         format.json { render :show, status: :created, location: @entry }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -38,7 +53,7 @@ class EntriesController < ApplicationController
   def update
     respond_to do |format|
       if @entry.update(entry_params)
-        format.html { redirect_to entry_url(@entry), notice: "Entry was successfully updated." }
+        format.html { redirect_to entries_url, notice: "Entry was successfully updated." }
         format.json { render :show, status: :ok, location: @entry }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -58,13 +73,21 @@ class EntriesController < ApplicationController
   end
 
   private
+
+    def filtering_params
+      params.slice(*Entry.filter_scopes)
+    end
     # Use callbacks to share common setup or constraints between actions.
     def set_entry
       @entry = Entry.find(params[:id])
     end
+    def set_account
+     @account = Account.find(params[:account_id])
+    end
 
     # Only allow a list of trusted parameters through.
     def entry_params
-      params.require(:entry).permit(:account_id, :entry_date, :check_number, :payee, :amount, :transfer_account_id, :transfer_entry_id, :category_id)
+      params.require(:entry).permit(:account_id, :entry_date, :check_number, :payee, :amount,
+                                    :transfer_account_id, :transfer_entry_id, :category_id)
     end
 end

@@ -84,7 +84,6 @@ class CategoriesTest < ApplicationSystemTestCase
     assert_text "Category was successfully destroyed"
     rows = find_all(".table-row")
     assert_equal rows.count, (count - 1)
-    binding.break
     assert current_url, category_url
   end
 end

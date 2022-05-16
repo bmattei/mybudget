@@ -18,6 +18,12 @@ dcu_long_term:
   bank: Dcu
   has_checking: false
 
+discover:
+  name: DiscoverCredit
+  number: 29900022
+  bank: Discover
+  has_checking: false
+
 sort_me1:
   name: AA
   number: A9090900

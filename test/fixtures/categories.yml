@@ -1,13 +1,36 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
+income:
+  name: income
+
 transportation:
   name: transportation
 
 utilities:
   name: utilities
 
+
 misc:
   name: misc
+
+food:
+  name: food
+
+restaurants:
+  name: restaurants
+  category: food
+
+groceries:
+  name: groceries
+  category: food
+
+misc_income:
+  name: misc_income
+  category: income
+
+salary:
+  name: salary
+  category: income
 
 auto_gas:
   name: auto_gas

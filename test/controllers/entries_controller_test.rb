@@ -2,7 +2,7 @@ require "test_helper"
 
 class EntriesControllerTest < ActionDispatch::IntegrationTest
   setup do
-    @entry = entries(:one)
+    @entry = entries(:dcu_checking_init)
   end
 
   test "should get index" do
@@ -16,17 +16,19 @@ class EntriesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should create entry" do
+
     assert_difference("Entry.count") do
-      post entries_url, params: { entry: { account_id: @entry.account_id, amount: @entry.amount, category_id: @entry.category_id, check_number: @entry.check_number, entry_date: @entry.entry_date, payee: @entry.payee, transfer_account_id: @entry.transfer_account_id, transfer_entry_id: @entry.transfer_entry_id } }
+      post entries_url,
+      params: { entry: { amount: 111.55,
+                        account_id: accounts(:dcu_checking).id,
+                        category_id: categories(:groceries).id,
+                        entry_date: Date.today - 155 ,
+                        payee: "Amazon"} }
     end
 
-    assert_redirected_to entry_url(Entry.last)
+    assert_redirected_to entries_url
   end
 
-  test "should show entry" do
-    get entry_url(@entry)
-    assert_response :success
-  end
 
   test "should get edit" do
     get edit_entry_url(@entry)
@@ -34,8 +36,14 @@ class EntriesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update entry" do
-    patch entry_url(@entry), params: { entry: { account_id: @entry.account_id, amount: @entry.amount, category_id: @entry.category_id, check_number: @entry.check_number, entry_date: @entry.entry_date, payee: @entry.payee, transfer_account_id: @entry.transfer_account_id, transfer_entry_id: @entry.transfer_entry_id } }
-    assert_redirected_to entry_url(@entry)
+    patch entry_url(@entry), params: { entry: {
+      account: accounts(:dcu_checking),
+      amount: 987.68,
+      category: categories(:auto_maintenance),
+      entry_date: Date.today-10,
+      payee: "A1 Auto",
+    } }
+    assert_redirected_to entries_url
   end
 
   test "should destroy entry" do
@@ -43,6 +51,6 @@ class EntriesControllerTest < ActionDispatch::IntegrationTest
       delete entry_url(@entry)
     end
 
-    assert_redirected_to entries_url
+    # assert_redirected_to entries_url
   end
 end

@@ -1,14 +1,16 @@
 class CategoriesController < ApplicationController
   before_action :set_category, only: %i[ show edit update destroy ]
   def display_columns
-        return [{model_method: "name", column: "name", label: "name"}, {model_method: "super", column: "categories_categories.name", label: "super" }]
+        return [{model_method: "name", column: "name", label: "name"},
+          {model_method: "super", column: "categories_categories.name", label: "super" }]
   end
   helper_method :display_columns
 
 
   def index
     @categories = Category.left_outer_joins(:category).filter_by(filtering_params).order("#{params[:column]} #{params[:direction]}")
-
+    @allow_delete = false
+    @allow_edit = false
     return @categories
   end
 

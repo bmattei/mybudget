@@ -9,7 +9,8 @@ class CreateEntries < ActiveRecord::Migration[7.0]
       t.integer :transfer_account_id
       t.integer :transfer_entry_id
       t.citext :memo
-      t.references :category, null: false, foreign_key: true
+      t.decimal :balance, precision: 13, scale: 4
+      t.references :category,  foreign_key: true
 
       t.timestamps
     end

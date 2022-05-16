@@ -40,7 +40,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_05_13_125846) do
     t.integer "transfer_account_id"
     t.integer "transfer_entry_id"
     t.citext "memo"
-    t.bigint "category_id", null: false
+    t.decimal "balance", precision: 13, scale: 4
+    t.bigint "category_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["account_id"], name: "index_entries_on_account_id"

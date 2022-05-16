@@ -2,6 +2,7 @@ class Category < ApplicationRecord
   include Filterable
   validates :name, presence: true
   validates :name, uniqueness: true
+  has_many :entries, dependent: :nullify
   has_many :categories, class_name: "Category",
             foreign_key: "category_id", dependent: :nullify
   belongs_to :category, class_name: "Category", optional: true,

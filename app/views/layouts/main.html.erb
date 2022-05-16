@@ -28,12 +28,12 @@
 
         <main role="main" class="w-full  pt-1 px-2 ml-10">
           <div class="flex flex-row ">
-            <div class="w-2/3">
+            <div class="">
               <%= yield %>
               <%= turbo_frame_tag "modal" %>
             </div>
 
-            <div class="w-1/4 mx-5">
+            <div class="mx-10 my-10">
               <%= yield :right %>
             </div>
           </div>

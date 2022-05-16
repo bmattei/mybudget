@@ -7,8 +7,12 @@
             <%= sort_link(column_info[:label].titleize, column_info[:column]) %>
        </div>
       <% end %>
+      <% if !defined?(allow_edit) || allow_edit %>
       <div class="table-cell px-2 py-4 text-transparent">EDIT</div>
+      <% end %>
+      <% if !defined?(allow_delete) || allow_delete %>
       <div class="table-cell px-2 py-4 text-transparent">DELETE</div>
+      <% end %>
 
     </div>
   </div>
@@ -18,15 +22,19 @@
       <div class="table-row even:bg-blue-100">
         <% display_columns.each do |column_info| %>
           <div class="table-cell overflow-y-scroll px-2 py-1" >
-            <%= rec.send(column_info[:model_method]) %>
+            <%= as(rec.send(column_info[:model_method]),column_info[:as]) %>
           </div>
         <% end %>
+        <% if !defined?(allow_edit) || allow_edit %>
         <div class="table-cell">
           <%= link_to 'edit', url_for([:edit, rec]), data: {turbo_frame: "_top"}, class: "btn-small"%>
         </div>
+        <% end %>
+        <% if !defined?(allow_delete) || allow_delete %>
         <div class="table-cell">
          <%= link_to 'delete', url_for(rec), method: :delete,  data: {turbo_frame: "_top",  turbo_method: :delete, turbo_confirm: "Are you sure?"}, class: "btn-small" %>
         </div>
+        <% end %>
       </div>
     <% end %>
 

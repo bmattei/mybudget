@@ -1,15 +1,16 @@
-<div class="mx-auto md:w-2/3 w-full flex">
-  <div class="mx-auto">
-    <% if notice.present? %>
-      <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
-    <% end %>
+<div class="w-full">
 
-    <%= render @account %>
+  <% if notice.present? %>
+    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
+  <% end %>
+  <% content_for :title do %> <%= @account.name %> <% end %>
 
-    <%= link_to 'Edit this account', edit_account_path(@account), class: "mt-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-    <div class="inline-block ml-2">
-      <%= button_to 'Destroy this account', account_path(@account), method: :delete, class: "mt-2 rounded-lg py-3 px-5 bg-gray-100 font-medium" %>
-    </div>
-    <%= link_to 'Back to accounts', accounts_path, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
+  <div class="flex justify-between items-center">
+    <h1 class="font-bold text-4xl"><%= @account.name %></h1>
   </div>
+  <%= render "shared/table", records: @account.entries, display_columns: EntriesController.new.display_columns %>
+  <div class='my-4'>
+    <%= link_to 'New', new_entry_path, data: {turbo_frame: "_top"}, class: "btn-primary" %>
+  </div>
+
 </div>
