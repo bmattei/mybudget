@@ -49,8 +49,10 @@ class AccountsTest < ApplicationSystemTestCase
 
   test "Should be able to edit and account" do
     visit accounts_url
-    name = "MY NEW NAME"
-    click_on "edit", match: :first
+    assert_text "Accounts", wait: 5
+    find(".table-row-group").click_on "edit", match: :first
+
+    assert_text "Editing account", wait: 5
     old_name = find_field('Name').value
     fill_in "Name", with: name
     click_on "Update Account"
