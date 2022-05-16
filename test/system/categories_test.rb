@@ -47,11 +47,12 @@ class CategoriesTest < ApplicationSystemTestCase
   end
   test "should update top level category" do
     visit categories_url
-    rows = find_all(".table-row")
+    rows = find_all(".table-row-group .table-row")
     category = categories(:misc)
     misc_row = rows.detect {|r| r.text.include?(category.name) }
     misc_row.click_on("edit")
-    assert_text category.name, wait: 100
+    assert_text "Editing category", wait: 3
+    assert_equal find("#category_name").value, category.name
     assert_text "Category", count: 0
     name = "miscellaneous"
 
