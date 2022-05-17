@@ -23,21 +23,20 @@ class Entry < ApplicationRecord
   end
   def update_balances
     self.account.entries.where("entry_date >= ?", self.entry_date).each do |entry|
-      # This will force the balance to be recalculated the next time it is needed
-      entry[:balance] = nil
+      entry.update_column(:balance, nil)
     end
   end
 
 
   def balance
     if !self[:balance]
-      self[:balance] = self.account.entries.
+      calc_balance = self.account.entries.
                           where("entry_date < ? or (entry_date = ? and (amount > ? or (amount = ? and id < ?)))",
-                                self.entry_date, self.entry_date, self.amount, self.amount, self.id).sum(:amount)
-      self[:balance] += self.amount;
-      self.save
+                                self.entry_date, self.entry_date, self.amount, self.amount, self.id).sum(:amount) + self.amount
+
+      self.update_column(:balance, calc_balance)
     end
-    self.reload[:balance]
+    self[:balance]
   end
   def account_name
     account.name
@@ -45,17 +44,19 @@ class Entry < ApplicationRecord
   def category_or_transfer_account
     if category
       category.name
+    elsif transfer_entry
+      transfer_entry.account.name
     else
-      entry.account.name
+      "UNCATEGORIZED"
     end
   end
   def inflow
-    if amount > 0
+    if amount && amount > 0
       amount
     end
   end
   def outflow
-    if amount < 0
+    if amount && amount < 0
       -(amount)
     end
   end

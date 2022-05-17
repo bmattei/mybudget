@@ -50,7 +50,7 @@ class AccountsTest < ApplicationSystemTestCase
   test "Should be able to edit and account" do
     visit accounts_url
     assert_text "Accounts", wait: 5
-    find(".table-row-group").click_on "edit", match: :first
+    find(".table-row-group").click_on "Edit", match: :first
 
     assert_text "Editing account", wait: 5
     old_name = find_field('Name').value
@@ -206,12 +206,12 @@ class AccountsTest < ApplicationSystemTestCase
     visit accounts_url
     # We should have a row for each account
     count = Account.count
-    assert_text "delete", count: count
+    assert_text "Delete", count: count
     accept_alert do
-       click_on "delete", match: :first
+       click_on "Delete", match: :first
     end
     # we should have one less row
-    assert_text "delete", count: count-1
+    assert_text "Delete", count: count-1
     assert_text "Account was successfully destroyed"
   end
 end

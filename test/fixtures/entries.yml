@@ -1,5 +1,4 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
 dcu_checking_init:
   account: dcu_checking
   entry_date: 2021-01-01
@@ -41,7 +40,7 @@ dcu_checking_deposit:
 
 
 
-init_discover:
+discover_init:
   account: discover
   entry_date: 2021-01-01
   check_number: 233
@@ -49,8 +48,7 @@ init_discover:
   category: misc
 
 
-
-fix_car:
+discover_fix_car:
   account: discover
   entry_date: 2021-05-29
   check_number: 101
@@ -60,35 +58,35 @@ fix_car:
   transfer_entry_id:
   category: auto_maintenance
 
-eat_out:
+discover_eat_out:
   account: discover
   entry_date: 2021-12-05
   payee: Linguines
   amount: -85.10
   category: restaurants
 
-eat_out2:
+discover_eat_out2:
   account: discover
   entry_date: 2022-02-06
   payee: Chipolte
   amount: -55.00
   category: restaurants
 
-eat_out3:
+discover_eat_out3:
   account: discover
   entry_date: 2021-08-11
   payee: Linguines
   amount: -85.10
   category: restaurants
 
-buy_groceries:
+discover_buy_groceries:
   account: discover
   entry_date: 2022-02-09
   payee: Stop & Shop
   amount: -155.00
   category: groceries
 
-buy_groceries2:
+discover_buy_groceries2:
   account: discover
   entry_date: 2022-02-10
   payee: Market Basket

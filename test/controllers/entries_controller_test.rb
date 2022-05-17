@@ -4,14 +4,13 @@ class EntriesControllerTest < ActionDispatch::IntegrationTest
   setup do
     @entry = entries(:dcu_checking_init)
   end
-
   test "should get index" do
     get entries_url
     assert_response :success
   end
 
   test "should get new" do
-    get new_entry_url
+    get new_entry_url(account_id: @entry.account_id)
     assert_response :success
   end
 
@@ -26,7 +25,7 @@ class EntriesControllerTest < ActionDispatch::IntegrationTest
                         payee: "Amazon"} }
     end
 
-    assert_redirected_to entries_url
+    assert_redirected_to account_url(accounts(:dcu_checking))
   end
 
 
@@ -43,7 +42,7 @@ class EntriesControllerTest < ActionDispatch::IntegrationTest
       entry_date: Date.today-10,
       payee: "A1 Auto",
     } }
-    assert_redirected_to entries_url
+    assert_redirected_to account_url(accounts(:dcu_checking))
   end
 
   test "should destroy entry" do

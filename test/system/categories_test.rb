@@ -28,7 +28,7 @@ class CategoriesTest < ApplicationSystemTestCase
     rows = find_all(".table-row")
     category = categories(:auto_gas)
     gas_row = rows.detect {|r| r.text.include?(category.name) and r.text.include?(category.super)}
-    gas_row.click_on("edit")
+    gas_row.click_on("Edit")
     assert_text category.name
     assert_text category.super
     name = "gasoline"
@@ -50,7 +50,7 @@ class CategoriesTest < ApplicationSystemTestCase
     rows = find_all(".table-row-group .table-row")
     category = categories(:misc)
     misc_row = rows.detect {|r| r.text.include?(category.name) }
-    misc_row.click_on("edit")
+    misc_row.click_on("Edit")
     assert_text "Editing category", wait: 3
     assert_equal find("#category_name").value, category.name
     assert_text "Category", count: 0
@@ -68,7 +68,7 @@ class CategoriesTest < ApplicationSystemTestCase
   test "delete should put up an alert" do
     visit categories_url
     skip "BROKEN"
-    click_on "delete", match: :first
+    click_on "Delete", match: :first
     accept_alert("Are you sure?") do
       click_on 'Cancel'
     end
@@ -80,7 +80,7 @@ class CategoriesTest < ApplicationSystemTestCase
     rows = find_all(".table-row")
     count = rows.count
     accept_alert do
-      click_on "delete", match: :first
+      click_on "Delete", match: :first
     end
     assert_text "Category was successfully destroyed"
     rows = find_all(".table-row")

@@ -27,12 +27,12 @@
         <% end %>
         <% if !defined?(allow_edit) || allow_edit %>
         <div class="table-cell">
-          <%= link_to 'edit', url_for([:edit, rec]), data: {turbo_frame: "_top"}, class: "btn-small"%>
+          <%= link_to 'Edit', url_for([:edit, rec]), data: {turbo_frame: "_top"}, class: "btn-small"%>
         </div>
         <% end %>
         <% if !defined?(allow_delete) || allow_delete %>
         <div class="table-cell">
-         <%= link_to 'delete', url_for(rec), method: :delete,  data: {turbo_frame: "_top",  turbo_method: :delete, turbo_confirm: "Are you sure?"}, class: "btn-small" %>
+         <%= link_to 'Delete', url_for(rec), method: :delete,  data: {turbo_frame: "_top",  turbo_method: :delete, turbo_confirm: "Are you sure?"}, class: "btn-small" %>
         </div>
         <% end %>
       </div>

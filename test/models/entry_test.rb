@@ -7,10 +7,10 @@ class EntryTest < ActiveSupport::TestCase
     end
   end
   test "balance should be correct" do
-    assert_equal entries(:dcu_checking_init).balance, 5000
-    assert_equal entries(:dcu_checking_buy_gas_1).balance, 4900
-    assert_equal entries(:dcu_checking_buy_gas_2).balance, 4800
-    assert_equal entries(:dcu_checking_buy_gas_3).balance, 4700
+    assert_equal  5000, entries(:dcu_checking_init).balance
+    assert_equal  4900, entries(:dcu_checking_buy_gas_1).balance
+    assert_equal  4800, entries(:dcu_checking_buy_gas_2).balance
+    assert_equal  4700, entries(:dcu_checking_buy_gas_3).balance
 
   end
   test 'Balances should updated correctly when an new entry is created' do

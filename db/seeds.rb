@@ -52,6 +52,7 @@ payees = [{name: "Shell", category: gas, account: discover, low: 20.00, high:125
           {name: "SweetWater", category: income, account: dcu_checking, low: 100.00, high: 300.00},
           {name: "Retirement Money", category: income, account: dcu_checking, low: 1500, high: 3000}
         ]
+Entry.create(account:dcu_checking, entry_date: Date.today - 1.year, payee: "Initial Amount", amount: 8000, category: income)
 Entry.create(account: discover, entry_date: Date.today - 10, payee: "Hartford Ins", amount: -587.00, category: auto_insurance)
 (0...num_entries).each do |i|
    payee = payees[rand(payees.count - 1)]
