@@ -7,19 +7,37 @@ class Entry < ApplicationRecord
             foreign_key: "transfer_entry_id", dependent: :destroy
   belongs_to :transfer_entry, class_name: "Entry", optional: true,
              foreign_key: "transfer_entry_id"
+
+  belongs_to :transfer_account, class_name: "Account", optional: true,
+                        foreign_key: "transfer_account_id"
   validates :amount, presence: true
   validates :account, presence: true
   # validate  :validate_transfer_or_category
   belongs_to :account
   filter_scope :payee_contains, :text, ->(str) {where("payee like ?", "%#{str}%")}
-  after_create :after_create
-  after_update :after_update
+  after_update :update_balances
+  after_create :add_transfer_transaction
+  # skip_callback :after_update, :after_create, if: -> {self.transfer_entry_id}
 
-  def after_update
-     update_balances
-  end
-  def after_create
-    update_balances
+
+  def add_transfer_transaction
+    if self.transfer_account && !self.transfer_entry
+      transfer_amount = -self.amount
+      puts "transfer amount: #{transfer_amount}"
+      transfer = Entry.create(account: self.transfer_account,
+                              amount: transfer_amount,
+                              entry_date: self.entry_date,
+                              memo: self.memo,
+                              transfer_account: self.account,
+                              transfer_entry: self)
+
+      if transfer
+       self.update_column(:transfer_entry_id, transfer.id)
+      else
+       errors.add("COULD NOT ADD TRANSFER TO #{self.transfer_account.name}")
+       raise ActiveRecord::Rollback
+      end
+    end
   end
   def update_balances
     self.account.entries.where("entry_date >= ?", self.entry_date).each do |entry|

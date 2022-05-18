@@ -8,6 +8,9 @@ class Account < ApplicationRecord
   filter_scope :name_contains, :text, ->(str) {where("name like ?", "%#{str}%")}
   filter_scope :number_contains, :text, ->(str) {where("number like ?", "%#{str}%")}
 
+  def balance
+      self.entries.sum(:amount)
+  end
 
 
 

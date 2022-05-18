@@ -29,8 +29,8 @@ class CategoriesTest < ApplicationSystemTestCase
     category = categories(:auto_gas)
     gas_row = rows.detect {|r| r.text.include?(category.name) and r.text.include?(category.super)}
     gas_row.click_on("Edit")
-    assert_text category.name
-    assert_text category.super
+    assert_equal category.name, find("#category_name").value
+    assert_equal category.super, find('#category_category_id > option[selected="selected"').text
     name = "gasoline"
     new_cat = "misc"
     fill_in "Name", with: name

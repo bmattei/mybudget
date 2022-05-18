@@ -37,6 +37,33 @@ class EntryTest < ActiveSupport::TestCase
     assert_equal entries(:dcu_checking_buy_gas_3).balance.to_f, 9700.to_f
   end
 
+  test "creating and transfer should create two entries" do
+    amount = -1000
+    from_account = accounts(:dcu_checking)
+    to_account = accounts(:discover)
+    memo =  "OUR TRANSFER MEMO"
+    before_count = Entry.count
+    Entry.create(entry_date: Date.today,
+                         account: from_account,
+                         transfer_account: to_account,
+                         memo: memo,
+                         amount: amount)
+     assert_equal before_count + 2, Entry.count
+     from_entry = from_account.entries.last
+     to_entry = to_account.entries.last
+     assert_equal amount, from_entry.amount
+     assert_equal (-amount), to_entry.amount
+     assert_equal from_entry.entry_date, to_entry.entry_date
+     assert_equal from_entry.memo, to_entry.memo
+     assert_equal to_account.id, to_entry.account.id
+     assert_equal from_account.id, from_entry.account.id
+     assert_equal from_account.id, to_entry.transfer_account_id
+     assert_equal to_account.id, from_entry.transfer_account_id
+     assert_equal from_entry.id, to_entry.transfer_entry_id
+     assert_equal to_entry.id, from_entry.transfer_entry_id
+
+  end
+
 
 
 end
