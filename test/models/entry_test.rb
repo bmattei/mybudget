@@ -37,7 +37,7 @@ class EntryTest < ActiveSupport::TestCase
     assert_equal entries(:dcu_checking_buy_gas_3).balance.to_f, 9700.to_f
   end
 
-  test "creating and transfer should create two entries" do
+  test "Should create two entries when a transfer is created" do
     amount = -1000
     from_account = accounts(:dcu_checking)
     to_account = accounts(:discover)
@@ -63,7 +63,7 @@ class EntryTest < ActiveSupport::TestCase
      assert_equal to_entry.id, from_entry.transfer_entry_id
 
   end
-  test "Transfer should update transaction balances" do
+  test "Should update transaction balances when a transfer is created" do
     amount = -1000
     from_account = accounts(:dcu_checking)
     to_account = accounts(:discover)
@@ -86,9 +86,104 @@ class EntryTest < ActiveSupport::TestCase
     assert_equal amount.to_f, new_from_entry.balance.to_f
 
     assert_equal (-amount.to_f), new_from_entry.transfer_entry.amount.to_f
+  end
+  test "Should update both sides of transfer when a transfer is updated" do
+    amount = -1000
+    from_account = accounts(:dcu_checking)
+    to_account = accounts(:discover)
 
+
+    # Date is picked to proceed all other entries
+    entry = Entry.create(entry_date: Date.today - 1000,
+                         account: from_account,
+                         transfer_account: to_account,
+                         amount: amount)
+    new_amount = 1500
+    entry.amount = new_amount
+    entry.save
+    assert_equal new_amount, entry.amount
+    assert_equal (-new_amount), entry.transfer_entry.amount
+  end
+  test "Should delete the transfer entry when transfer is changed to a non tranfer transaction" do
+    amount = -1000
+    from_account = accounts(:dcu_checking)
+    to_account = accounts(:discover)
+
+
+    # Date is picked to proceed all other entries
+    entry = Entry.create(entry_date: Date.today - 1000,
+                         account: from_account,
+                         transfer_account: to_account,
+                         amount: amount)
+    assert entry
+    transfer_entry = entry.transfer_entry
+    assert transfer_entry
+
+    entry.update(transfer_account_id: nil, category: categories(:auto_maintenance),
+                                payee: "A1 Auto")
+
+    assert_nil entry.transfer_account_id, "transfer_account_id not nil"
+    assert_nil entry.transfer_entry_id, "transfer_entry_id not nil"
+
+    assert Entry.where(id:transfer_entry.id).count, 0
+  end
+  test "Should add  an entry when entry  is changed to a tranfer transaction" do
+    amount = -100
+    entry = Entry.create(account: accounts(:dcu_checking),
+                         category: categories(:restaurants),
+                         payee: 'linguines',
+                         amount: amount,
+                         entry_date: Date.today - 44)
+     assert_not_nil entry
+     before_count = Entry.count
+     entry.update(category: nil, payee: nil, amount: amount, transfer_account: accounts(:discover))
+
+     after_count = Entry.count
+     assert_equal before_count + 1, after_count
+     entry.reload
+     transfer_entry = entry.transfer_entry
+     assert_not_nil transfer_entry
+     assert_equal (-amount), transfer_entry.amount
 
   end
+  test "Should balances should be correct when an entry is changed to a transfer" do
+    amount = -100
+    entry = Entry.create(account: accounts(:dcu_checking),
+                         category: categories(:restaurants),
+                         payee: 'linguines',
+                         amount: amount,
+                         entry_date: Date.today - 44)
+     entry.update(category: nil, payee: nil, amount: amount, transfer_account: accounts(:discover))
+     Entry.all.each do |e|
+       calc_balance = e.account.entries.
+                           where("entry_date < ? or (entry_date = ? and (amount > ? or (amount = ? and id <= ?)))",
+                                 e.entry_date, e.entry_date, e.amount, e.amount, e.id).sum(:amount)
+       assert_equal calc_balance.to_f, e.balance.to_f
+     end
+  end
+  test "Should balances should be correct when an entry is changed from a transfer" do
+    amount = -1000
+    from_account = accounts(:dcu_checking)
+    to_account = accounts(:discover)
+
+    # Date is picked to proceed all other entries
+    entry = Entry.create(entry_date: Date.today - 1000,
+                         account: from_account,
+                         transfer_account: to_account,
+                         amount: amount)
+
+    entry.update(transfer_account_id: nil, category: categories(:auto_maintenance),
+                                payee: "A1 Auto")
+    Entry.all.each do |e|
+      calc_balance = e.account.entries.
+                            where("entry_date < ? or (entry_date = ? and (amount > ? or (amount = ? and id <= ?)))",
+                                        e.entry_date, e.entry_date, e.amount, e.amount, e.id).sum(:amount)
+      assert_equal calc_balance.to_f, e.balance.to_f
+    end
+
+  end
+
+
 
 
 

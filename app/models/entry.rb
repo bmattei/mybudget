@@ -15,32 +15,48 @@ class Entry < ApplicationRecord
   # validate  :validate_transfer_or_category
   belongs_to :account
   filter_scope :payee_contains, :text, ->(str) {where("payee like ?", "%#{str}%")}
-  after_update :update_balances
-  after_create :add_transfer_transaction
-  # skip_callback :after_update, :after_create, if: -> {self.transfer_entry_id}
+  after_update :clear_balances
+  after_save :manage_transfers
 
 
-  def add_transfer_transaction
-    if self.transfer_account && !self.transfer_entry
-      transfer_amount = -self.amount
-      puts "transfer amount: #{transfer_amount}"
-      transfer = Entry.create(account: self.transfer_account,
-                              amount: transfer_amount,
-                              entry_date: self.entry_date,
-                              memo: self.memo,
-                              transfer_account: self.account,
-                              transfer_entry: self)
+ private def add_transfer_entry
+   transfer_amount = -self.amount
+   puts "transfer amount: #{transfer_amount}"
+   transfer = Entry.create(account: self.transfer_account,
+                           amount: transfer_amount,
+                           entry_date: self.entry_date,
+                           memo: self.memo,
+                           transfer_account: self.account,
+                           transfer_entry: self)
 
-      if transfer
-       self.update_column(:transfer_entry_id, transfer.id)
-       transfer.update_balances
+   if transfer
+    self.update_column(:transfer_entry_id, transfer.id)
+    transfer.clear_balances
+   else
+    errors.add("COULD NOT ADD TRANSFER TO #{self.transfer_account.name}")
+    raise ActiveRecord::Rollback
+   end
+ end
+
+  def manage_transfers
+    if self.transfer_account
+      if !self.transfer_entry
+        add_transfer_entry
       else
-       errors.add("COULD NOT ADD TRANSFER TO #{self.transfer_account.name}")
-       raise ActiveRecord::Rollback
+        self.transfer_entry.update_column(:amount, -(self.amount))
+      end
+    else
+      self.update_column(:transfer_entry_id, nil)
+      trans_entry = Entry.where(transfer_entry_id: self.id).first
+      if !trans_entry.nil?
+       trans_entry.clear_balances
+       pp trans_entry
+       trans_entry.delete
+       puts "LINE 54"
       end
     end
   end
-  def update_balances
+  def clear_balances
     self.account.entries.where("entry_date >= ?", self.entry_date).each do |entry|
       entry.update_column(:balance, nil)
     end
