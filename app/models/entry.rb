@@ -33,6 +33,7 @@ class Entry < ApplicationRecord
 
       if transfer
        self.update_column(:transfer_entry_id, transfer.id)
+       transfer.update_balances
       else
        errors.add("COULD NOT ADD TRANSFER TO #{self.transfer_account.name}")
        raise ActiveRecord::Rollback

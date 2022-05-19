@@ -63,6 +63,32 @@ class EntryTest < ActiveSupport::TestCase
      assert_equal to_entry.id, from_entry.transfer_entry_id
 
   end
+  test "Transfer should update transaction balances" do
+    amount = -1000
+    from_account = accounts(:dcu_checking)
+    to_account = accounts(:discover)
+    from_account_saved_balances = from_account.entries.collect {|e|  {id: e.id, balance: e.balance} }
+    to_account_saved_balances = to_account.entries.collect {|e|  {id: e.id, balance: e.balance} }
+
+    # Date is picked to proceed all other entries
+    new_from_entry = Entry.create(entry_date: Date.today - 1000,
+                         account: from_account,
+                         transfer_account: to_account,
+                         amount: amount)
+    from_account_saved_balances.each do |h|
+      entry = Entry.find(h[:id])
+      assert_equal (h[:balance] + amount).to_f, entry.balance.to_f, entry.as_json.to_s
+    end
+    to_account_saved_balances.each do |h|
+      entry = Entry.find(h[:id])
+      assert_equal (h[:balance] - amount).to_f, entry.balance.to_f, entry.as_json.to_s
+    end
+    assert_equal amount.to_f, new_from_entry.balance.to_f
+
+    assert_equal (-amount.to_f), new_from_entry.transfer_entry.amount.to_f
+
+
+  end
 
 
 
