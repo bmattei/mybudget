@@ -1,3 +1,5 @@
+<div data-controller="entry">
+
 <%= form_with(model: entry, class: "contents", data: { turbo_frame: "_top"})  do |form| %>
   <% if entry.errors.any? %>
     <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
@@ -13,10 +15,10 @@
 
   <div class="my-5">
     <%= form.label :account %>
-    <% if !@entry.account %>
+    <% if !entry.account %>
     <%= form.collection_select :account_id, Account.all, :id, :name, class: "basic-field" %>
     <% else %>
-    <%= form.collection_select :account_id, [@entry.account], :id, :name, class: "basic-field" %>
+    <%= form.collection_select :account_id, [entry.account], :id, :name, class: "basic-field" %>
     <% end %>
   </div>
 
@@ -26,40 +28,50 @@
     <%= form.date_field :entry_date, class: "basic-field" %>
   </div>
 
+  <% if entry.account.has_checking %>
   <div class="my-5">
     <%= form.label :check_number %>
     <%= form.number_field :check_number, class: "basic-field px-3" %>
   </div>
+  <% end %>
 
   <div class="my-5">
     <%= form.label :payee %>
-    <%= form.text_field :payee, class: "basic-field" %>
+    <%= form.text_field :payee,
+        data: {action: "entry#on_set_payee"},
+        class: "basic-field" %>
   </div>
-  <% if !entry.transfer_entry %>
    <div class="my-5">
      <%= form.label :category %>
-     <%= form.collection_select :category_id, Category.order(:name),:id, :name , include_blank: true, class: "basic-field" %>
+     <%= form.collection_select :category_id, Category.order(:name),:id, :name ,
+              {include_blank: true},
+              {data: {action: "entry#on_set_category"}, class: "basic-field"}
+               %>
    </div>
-  <% end %>
-  <% if !entry.category %>
-  <div class="my-5">
+ <div class="my-5
    <%= form.label :transfer_account_id %>
-   <%= form.number_field :transfer_account_id, class: "basic-field" %>
+   <%= form.collection_select :transfer_account_id, Account.where.not(id: entry.account_id), :id, :name,
+        {include_blank: true},
+        {data:{action: "entry#on_set_transfer"}, class: "basic-field"} %>
   </div>
-  <% end %>
   <div class="my-5">
     <%= form.label :inflow %>
-    <%= form.text_field :inflow, class: "basic-field" %>
+    <%= form.text_field :inflow,
+        data: {action: "entry#on_set_inflow"},
+         class: "basic-field" %>
   </div>
   <div class="my-5">
     <%= form.label :outflow %>
-    <%= form.text_field :outflow, class: "basic-field" %>
+    <%= form.text_field :outflow,
+    data: {action: "entry#on_set_outflow"},
+    class: "basic-field" %>
   </div>
 
  <div class="inline">
     <%= form.submit class: "btn-small" %>
   </div>
   <div class="inline">
-    <%= link_to "Cancel", account_url(@entry.account), data: { turbo_frame: "_top"}, class: "btn-small" %>
+    <%= link_to "Cancel", account_url(entry.account), data: { turbo_frame: "_top"}, class: "btn-small" %>
   </div>
 <% end %>
+</div>
