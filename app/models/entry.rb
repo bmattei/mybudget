@@ -4,7 +4,7 @@ class Entry < ApplicationRecord
   belongs_to :account
   belongs_to :category, required: false
   has_one :transfer_entry, class_name: "Entry",
-            foreign_key: "transfer_entry_id", dependent: :destroy
+            foreign_key: "transfer_entry_id"
   belongs_to :transfer_entry, class_name: "Entry", optional: true,
              foreign_key: "transfer_entry_id"
 
@@ -17,11 +17,13 @@ class Entry < ApplicationRecord
   filter_scope :payee_contains, :text, ->(str) {where("payee like ?", "%#{str}%")}
   after_update :clear_balances
   after_save :manage_transfers
+  before_destroy :delete_other_transfer_entry
+
+
 
 
  private def add_transfer_entry
    transfer_amount = -self.amount
-   puts "transfer amount: #{transfer_amount}"
    transfer = Entry.create(account: self.transfer_account,
                            amount: transfer_amount,
                            entry_date: self.entry_date,
@@ -37,8 +39,12 @@ class Entry < ApplicationRecord
     raise ActiveRecord::Rollback
    end
  end
-
-  def manage_transfers
+private def delete_other_transfer_entry
+  if self.transfer_entry
+     self.transfer_entry.delete
+  end
+end
+private def manage_transfers
     if self.transfer_account
       if !self.transfer_entry
         add_transfer_entry
@@ -50,7 +56,6 @@ class Entry < ApplicationRecord
       trans_entry = Entry.where(transfer_entry_id: self.id).first
       if !trans_entry.nil?
        trans_entry.clear_balances
-       pp trans_entry
        trans_entry.delete
        puts "LINE 54"
       end

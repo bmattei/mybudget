@@ -104,7 +104,26 @@ class EntryTest < ActiveSupport::TestCase
     assert_equal new_amount, entry.amount
     assert_equal (-new_amount), entry.transfer_entry.amount
   end
-  test "Should delete the transfer entry when transfer is changed to a non tranfer transaction" do
+  test "should delete both entries when a transfer is deleted" do
+    amount = -1000
+    from_account = accounts(:dcu_checking)
+    to_account = accounts(:discover)
+
+
+    # Date is picked to proceed all other entries
+    entry = Entry.create(entry_date: Date.today - 1000,
+                         account: from_account,
+                         transfer_account: to_account,
+                         amount: amount)
+
+    assert_equal 1, Entry.where(id: entry.id).count
+    assert_equal 1,  Entry.where(id: entry.transfer_entry_id).count
+
+    entry.destroy
+    assert_equal 0, Entry.where(id: entry.id).count
+    assert_equal 0,  Entry.where(id: entry.transfer_entry_id).count
+  end
+  test "Should delete the transfer entry (in other account) when transfer is changed to a non tranfer transaction" do
     amount = -1000
     from_account = accounts(:dcu_checking)
     to_account = accounts(:discover)

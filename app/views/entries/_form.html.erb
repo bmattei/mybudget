@@ -56,13 +56,13 @@
   </div>
   <div class="my-5">
     <%= form.label :inflow %>
-    <%= form.text_field :inflow,
+    <%= form.number_field :inflow, in: 0.01..1000000.99, step: 0.01,
         data: {action: "entry#on_set_inflow"},
          class: "basic-field" %>
   </div>
   <div class="my-5">
     <%= form.label :outflow %>
-    <%= form.text_field :outflow,
+    <%= form.number_field :outflow, in: 0.01..1000000.99, step: 0.01,
     data: {action: "entry#on_set_outflow"},
     class: "basic-field" %>
   </div>

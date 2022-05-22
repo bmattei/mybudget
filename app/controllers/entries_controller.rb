@@ -89,16 +89,18 @@ class EntriesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def entry_params
-
-      params["entry"]["amount"] = params["entry"]["inflow"].to_f > 0 ? params["entry"]["inflow"] : (-(params["entry"]["outflow"].to_f)).to_s
+      set_amount
+      params.require(:entry).permit(:account_id, :entry_date, :check_number, :payee, :amount, :memo,
+                                                          :transfer_account_id,  :category_id)
+    end
+    private def set_amount
+      params[:amount] = nil
+      if params["entry"]["inflow"] && params["entry"]["inflow"].to_f > 0.0
+        params[:entry][:amount] = params["entry"]["inflow"]
+      elsif params["entry"]["outflow"] && params["entry"]["outflow"].to_f > 0.0
+        params[:entry][:amount] = (-params["entry"]["outflow"].to_f).to_s
+      end
       params[:entry].delete(:outflow)
       params[:entry].delete(:inflow)
-
-
-
-      params.require(:entry).permit(:account_id, :entry_date, :check_number, :payee, :amount,
-                                                          :transfer_account_id, :transfer_entry_id, :category_id)
-
-
     end
 end

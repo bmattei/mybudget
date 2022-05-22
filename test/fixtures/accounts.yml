@@ -22,7 +22,7 @@ discover:
   name: DiscoverCredit
   number: 29900022
   bank: Discover
-  has_checking: false
+  has_checking: true
 
 sort_me1:
   name: AA
