@@ -19,7 +19,7 @@ class AccountsController < ApplicationController
   # GET /accounts/1 or /accounts/1.json
   def show
     @account = Account.find(params[:id])
-    @entries = @account.entries.filter_by(filtering_params).joins(:account).left_outer_joins(:category).order("accounts.name asc").order(entry_date: :asc).order("#{params[:column]} #{params[:direction]}")
+    @entries = @account.entries.filter_by(params.slice(*Entry.filter_scopes)).joins(:account).left_outer_joins(:category).order("accounts.name asc").order(entry_date: :asc).order("#{params[:column]} #{params[:direction]}")
   end
 
 

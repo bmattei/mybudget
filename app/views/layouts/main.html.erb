@@ -12,7 +12,7 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
+  <body class="bg-slate-100">
     <header class="navbar navbar-fixed-top navbar-inverse">
       <div class="container mx-auto">
         <nav>
@@ -27,8 +27,8 @@
       <div class="flex flex-row flex-wrap py-4">
 
         <main role="main" class="w-full  pt-1 px-2 ml-10">
-          <div class="flex flex-row ">
-            <div class="">
+          <div class="flex flex-row">
+            <div class="  basis-3/4">
               <%= yield %>
               <%= turbo_frame_tag "modal" %>
             </div>

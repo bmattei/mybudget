@@ -1,5 +1,13 @@
 class Entry < ApplicationRecord
   include Filterable
+  filter_scope :category, Category.all, -> (category_id) {where(category_id: category_id)}
+  filter_scope :payee_contains, :text, ->(str) {where("payee like ?", "%#{str}%")}
+  filter_scope :outflow_greater_than, :money, ->(amount) {where("amount < ?", -(amount.to_f))}
+  filter_scope :outflow_less_than, :money, ->(amount) {where("amount > ? AND amount < ?", -(amount.to_f), 0)}
+  filter_scope :inflow_greater_than, :money, ->(amount) {where("amount > ?", amount.to_f)}
+  filter_scope :inflow_less_than, :money, ->(amount) {where("amount < ? AND amount > ?", amount.to_f, 0)}
+  filter_scope :date_before, :date, -> (date) {where("entry_date < ?", date)}
+  filter_scope :date_after, :date, -> (date) {where("entry_date > ?", date)}
 
   belongs_to :account
   belongs_to :category, required: false
@@ -14,7 +22,6 @@ class Entry < ApplicationRecord
   validates :account, presence: true
   # validate  :validate_transfer_or_category
   belongs_to :account
-  filter_scope :payee_contains, :text, ->(str) {where("payee like ?", "%#{str}%")}
   after_update :clear_balances
   after_save :manage_transfers
   before_destroy :delete_other_transfer_entry

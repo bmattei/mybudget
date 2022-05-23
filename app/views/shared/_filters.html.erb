@@ -12,9 +12,12 @@
               <% when :integer %>
                 <%= form.number_field filter, value: params[filter], step: 1 %>
               <% when :money %>
-                <%= form.number_field filter, value: params[filter],step: 0.5 %>
+                <%= form.number_field filter, value: params[filter],step: 0.01 %>
               <% when :date %>
                 <%= form.date_field filter, value: params[filter] %>
+              <% when ActiveRecord::Relation %>
+              <%= form.collection_select (model.filter_types[filter].model.name.downcase).to_sym,
+                                         model.filter_types[filter], :id, :name, {include_blank: true}, class: "basic-field" %>
               <% else %>
                   <%= form.text_field filter, value: params[filter]%>
               <% end %>
