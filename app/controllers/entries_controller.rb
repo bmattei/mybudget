@@ -22,6 +22,38 @@ class EntriesController < ApplicationController
 
   end
 
+  def allowed_types
+    ["column_chart", "pie_chart", "line_chart"]
+  end
+  helper_method :allowed_types
+  def allowed_intervals
+    ["", "year", "quarter", "month", "week", "day"]
+  end
+  helper_method :allowed_intervals
+  def reporting
+
+    @type = allowed_types.include?(params["type"]) ?  params["type"] : "column_chart"
+    interval = allowed_intervals.include?(params["interval"]) ?  params["interval"] : ""
+    @report_data = Entry.joins(:category)
+    if (params[:start] && params[:start].to_date.is_a?(Date))
+      @report_data = @report_data.where("entry_date >= ?", params[:start])
+    end
+    if (params[:end] && params[:end].to_date.is_a?(Date))
+      @report_data = @report_data.where("entry_date <= ?", params[:end])
+    end
+    if interval.length > 0
+      @report_data = @report_data.group("categories.name").group("date_trunc(\'#{interval}\', entry_date)").sum(:amount)
+      @report_data.delete_if {|k,v| v > 0}
+      @report_data.each {|k,v| @report_data[k] = v.abs}
+      @report_data.each {|k,v| k[1] = k[1].to_date}
+    else
+      @report_data = @report_data.group("categories.name").sum(:amount)
+      @report_data.delete_if {|k,v| v > 0}
+      @report_data.each {|k,v| @report_data[k] = v.abs}
+    end
+
+  end
+
   # GET /entries/1 or /entries/1.json
   def show
   end
@@ -83,6 +115,7 @@ class EntriesController < ApplicationController
     def set_entry
       @entry = Entry.find(params[:id])
     end
+
     def set_account
      @account = Account.find(params[:account_id])
     end
@@ -93,6 +126,7 @@ class EntriesController < ApplicationController
       params.require(:entry).permit(:account_id, :entry_date, :check_number, :payee, :amount, :memo,
                                                           :transfer_account_id,  :category_id)
     end
+
     private def set_amount
       params[:amount] = nil
       if params["entry"]["inflow"] && params["entry"]["inflow"].to_f > 0.0

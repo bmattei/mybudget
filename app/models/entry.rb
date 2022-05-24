@@ -20,6 +20,10 @@ class Entry < ApplicationRecord
                         foreign_key: "transfer_account_id"
   validates :amount, presence: true
   validates :account, presence: true
+  validates :entry_date, presence: true
+  validates :category, presence: true, unless: :transfer_account
+  validates :transfer_account, presence: true, unless: :category
+
   # validate  :validate_transfer_or_category
   belongs_to :account
   after_update :clear_balances

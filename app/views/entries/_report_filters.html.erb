@@ -1,0 +1,30 @@
+<div data-controller="report">
+
+<div id="message-area" class="my-5">
+
+</div>
+<%= form_with url: "/reporting", method: :get do |form| %>
+  <div>
+    <%= form.label :query, "Date Range:" %>
+  </div>
+  <%= form.date_field :start, value: params[:start] %>
+  <%= form.date_field :end, value: params[:end] %>å
+  <div>
+    <%= form.label :query, "Chart Type" %>
+  </div>
+  <div>
+    <%= form.select :type, options_for_select(allowed_types , params[:type]), {},
+     {data: {action: "report#select_chart_type"}}%>
+  </div>
+  <div>
+    <%= form.label :query, "Interval"            %>
+  </div>
+  <div>
+    <%= form.select :interval, options_for_select(allowed_intervals , params[:interval]) %>
+  </div>
+  <div>
+    <%= form.submit "Report" , class: 'btn-small'%>
+  </div>
+<% end %>
+
+</div>

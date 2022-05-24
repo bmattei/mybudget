@@ -1,0 +1,13 @@
+<div >
+
+  <h1 class="font-bold text-4xl">Reports</h1>
+
+  <%= render partial: "chart", locals:{type: @type, data: @report_data}  %>
+  <%#= render :partial => '/shared/table', :locals => {records: @accounts, columns: ["bank", "name", "number", "has_checking"]} %>
+
+  <% content_for :right do %>
+    <div>
+       <%= render :partial => 'report_filters' %>
+    </div>
+  <% end %>
+</div>
