@@ -72,9 +72,13 @@ end
   def create_transfer(account, ynab_entry, amount)
     (foo, transfer_account_name) = ynab_entry.payee.split(' : ')
     transfer_account = @account_map[transfer_account_name] || abort("****\naccount #{transfer_account} does not exist\n***")
-    Entry.create!(account: account, payee: ynab_entry.payee, entry_date: ynab_entry.entry_date,
+    Entry.create!(account: account,
+                  entry_date: ynab_entry.entry_date,
+                  check_number: ynab_entry.check_number,
+                  payee: ynab_entry.payee,
                   transfer_account: transfer_account,
-                  amount: amount, memo: ynab_entry.memo)
+                  amount: amount,
+                  memo: ynab_entry.memo)
   end
 
   def create_entry(account, ynab_entry, amount)
@@ -85,8 +89,14 @@ end
 
     category ||= create_category(category_name)
     # Entry.create(account: discover, entry_date: Date.today - 10, payee: "Hartford Ins", amount: -587.00, category: auto_insurance)
-    Entry.create!(account: account, payee: ynab_entry.payee, entry_date: ynab_entry.entry_date, category: category,
-                  amount: amount, memo: ynab_entry.memo)
+    Entry.create!(account: account,
+                  entry_date: ynab_entry.entry_date,
+                  check_number: ynab_entry.check_number,
+                  payee: ynab_entry.payee,
+                  amount: amount,
+                  memo: ynab_entry.memo,
+                  category: category
+                  )
   end
 
   def create_category(full_category_name)
@@ -133,7 +143,7 @@ end
     suppress(Exception) do
        syscmd('psql mybudget_development -c "DROP TABLE ynab_entries;"')
     end
-    
+
     syscmd("rails g model ynab_entry account_name:text:index flag:text cleared:text check_number:integer entry_date:date:index" +
            " payee:text category_name:text master_category:text sub_category:text memo:text 'outflow:decimal{13,4}' 'inflow:decimal{13.4}' balance:decimal{13.4}")
     syscmd(" rails db:migrate")

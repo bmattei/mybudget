@@ -13,6 +13,9 @@ class CreateEntries < ActiveRecord::Migration[7.0]
       t.references :category,  foreign_key: true
 
       t.timestamps
+
     end
+    add_index :entries, [:entry_date]
+    add_index :entries, [:account_id]
   end
 end

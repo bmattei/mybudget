@@ -2,7 +2,8 @@ class AccountsController < ApplicationController
   before_action :set_account, only: %i[ show edit update destroy ]
 
   def display_columns
-        return [{model_method: "bank", column: "bank", label: "bank"}, {model_method: "name", column: "name", label: "name" },
+        return [{model_method: "bank", column: "bank", label: "bank"},
+                {model_method: "name", column: "name", label: "name" },
                 {model_method: "number", column: "number", label: "Number"},
                 {model_method: "has_checking", column: "has_checking", label: "Checking"}]
   end
@@ -19,7 +20,12 @@ class AccountsController < ApplicationController
   # GET /accounts/1 or /accounts/1.json
   def show
     @account = Account.find(params[:id])
-    @entries = @account.entries.filter_by(params.slice(*Entry.filter_scopes)).joins(:account).left_outer_joins(:category).order("accounts.name asc").order(entry_date: :asc).order("#{params[:column]} #{params[:direction]}")
+    @entries = @account.entries.filter_by(params.slice(*Entry.filter_scopes)).
+    left_outer_joins(:category).
+    order("#{params[:column]} #{params[:direction]}").
+    order(entry_date: :asc).order(amount: :desc)
+
+
   end
 
 

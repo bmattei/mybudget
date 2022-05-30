@@ -1,12 +1,15 @@
 module ApplicationHelper
   def sort_link(label, column)
-    path_helper = params[:controller] + '_path'
+    #path_helper = params[:controller] + '_path'
+    #path_helper = url_for
     params.permit!
 
     if column == params[:column]
-      link_to(label, send(path_helper, params.merge({ column: column, direction: next_direction })))
+      link_to(label, url_for(params.merge({ column: column, direction: next_direction })))
+      # link_to(label, send(path_helper, params.merge({ column: column, direction: next_direction })))
     else
-      link_to(label, send(path_helper, params.merge({ column: column, direction: 'asc' })))
+      link_to(label, url_for(params.merge({ column: column, direction: 'asc' })))
+      # link_to(label, send(path_helper, params.merge({ column: column, direction: 'asc' })))
     end
   end
 

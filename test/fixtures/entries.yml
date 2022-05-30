@@ -2,21 +2,21 @@
 dcu_checking_init:
   account: dcu_checking
   entry_date: 2021-01-01
-  check_number: 233
   amount: 5000.00
   category: misc_income
+  memo: "dcu checking init"
 
 dcu_checking_buy_gas_1:
   account: dcu_checking
   entry_date: 2021-01-01
-  check_number: 233
+  check_number: 232
   payee: "Shell"
   amount: -100
   category: auto_gas
 
 dcu_checking_buy_gas_2:
   account: dcu_checking
-  entry_date: 2021-01-01
+  entry_date: 2021-01-02
   check_number: 233
   payee: "Shell"
   amount: -100
@@ -25,7 +25,6 @@ dcu_checking_buy_gas_2:
 dcu_checking_buy_gas_3:
   account: dcu_checking
   entry_date: 2021-02-01
-  check_number: 233
   payee: "Shell"
   amount: -100
   category: auto_gas
@@ -33,30 +32,37 @@ dcu_checking_buy_gas_3:
 dcu_checking_deposit:
   account: dcu_checking
   entry_date: 2021-02-02
-  check_number: 233
   payee: "SweetWater"
   amount: 500
   category: income
 
+dcu_checking_buy_groceries:
+  account: discover
+  entry_date: 2022-02-09
+  check_number: 239
+  payee: Stop & Shop
+  amount: -125.23
+  category: groceries
+  memo: "dcu checkingbuy groceries"
 
 
 discover_init:
   account: discover
   entry_date: 2021-01-01
-  check_number: 233
   amount: -954.89
   category: misc
+  memo: "discover init"
 
 
 discover_fix_car:
   account: discover
   entry_date: 2021-05-29
-  check_number: 101
   payee: "A1 Auto"
   amount: -112.00
   transfer_account_id:
   transfer_entry_id:
   category: auto_maintenance
+  memo: "discover fix car"
 
 discover_eat_out:
   account: discover
@@ -64,6 +70,7 @@ discover_eat_out:
   payee: Linguines
   amount: -85.10
   category: restaurants
+  memo: "discover eat out"
 
 discover_eat_out2:
   account: discover
@@ -71,6 +78,7 @@ discover_eat_out2:
   payee: Chipolte
   amount: -55.00
   category: restaurants
+  memo: "discover eat out2"
 
 discover_eat_out3:
   account: discover
@@ -78,6 +86,7 @@ discover_eat_out3:
   payee: Linguines
   amount: -85.10
   category: restaurants
+  memo: "discover eat out 3"
 
 discover_buy_groceries:
   account: discover
@@ -85,6 +94,7 @@ discover_buy_groceries:
   payee: Stop & Shop
   amount: -155.00
   category: groceries
+  memo: "discover buy groceries"
 
 discover_buy_groceries2:
   account: discover
@@ -92,3 +102,4 @@ discover_buy_groceries2:
   payee: Market Basket
   amount: -135.00
   category: groceries
+  memo: "discover buy groceries 2"

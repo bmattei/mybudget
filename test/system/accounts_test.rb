@@ -214,4 +214,167 @@ class AccountsTest < ApplicationSystemTestCase
     assert_text "Delete", count: count-1
     assert_text "Account was successfully destroyed"
   end
+
+  test "Show should show account" do #
+    visit account_url(@account)
+    assert_equal current_url, account_url(@account)
+    assert_text @account.name
+  end
+  test "Show page should have filters" do
+    visit account_url(@account)
+    assert_text "Date Range"
+    assert_text "Amount Range"
+    assert_text  "Payee"
+    assert_text  "Check Range"
+    assert_text  "Category"
+  end
+  test "Show should list the entries for the account" do
+    visit account_url(@account)
+    assert_equal @account.entries.count, find_all(".table-row-group .table-row").count
+  end
+  test "Show account should have an entry table with the correct headers" do
+    visit account_url(@account)
+    assert_text "Category"
+    assert_text "Entrydate"
+    assert_text "Check#"
+    assert_text "Payee"
+    assert_text "Memo"
+    assert_text "Inflow"
+    assert_text "Outflow"
+    assert_text "Balance"
+  end
+  test "Show account should have an row in the entry table for each entry" do
+    visit account_url(@account)
+    count_in_db = @account.entries.count
+    count_in_view = find_all(".table-row-group .table-row").count
+    assert_equal count_in_db, count_in_view
+  end
+  test "Show each entry should have the correct data" do
+    account = accounts(:discover)
+    visit account_url(account)
+    rows = find_all(".table-row-group .table-row")
+    i = 0
+    account.entries.order(entry_date: :asc).each do |e|
+      columns = rows[i].find_all('.table-cell')
+      assert_equal e.category.name, columns[0].text if e.category.name
+      assert_equal e.entry_date.to_s, columns[1].text
+      assert_equal e.check_number.to_s, columns[2].text if e.check_number
+      assert_equal e.payee, columns[3].text if e.payee
+      assert_equal e.memo, columns[4].text if e.memo
+      assert_equal e.amount.to_f, columns[5].text.tr('$,','').to_f if e.amount > 0
+      assert_equal e.amount.abs.to_f, columns[6].text.tr('$,','').to_f if e.amount < 0
+      assert_equal e.balance.to_f, columns[7].text.tr('$,','').to_f
+      i += 1
+    end
+  end
+  test "Show should be able to filter entries by Minumum Date" do
+     visit account_url(@account)
+     min_date =  Entry.group(:account_id).minimum("entry_date")[@account.id]
+     find("#date_after").fill_in(with: min_date + 1)
+     click_on "Filter"
+     expected  = @account.entries.where("entry_date >= ?", min_date + 1)
+     sleep 2
+     assert_equal expected.count, find_all(".table-row-group .table-row").count
+     expected.each do |e|
+       assert_text e.entry_date.to_s
+       assert_text e.payee if e.payee
+       assert_text e.memo  if e.memo
+     end
+  end
+  test "Show should be able to filter entries by Maximum Date" do
+     visit account_url(@account)
+     max_date =  Entry.group(:account_id).maximum("entry_date")[@account.id]
+     find("#date_before").fill_in(with: max_date - 1)
+
+     click_on "Filter"
+
+     expected  = @account.entries.where("entry_date <= ?", max_date - 1)
+     sleep 2
+
+     assert_equal expected.count, find_all(".table-row-group .table-row").count
+     expected.each do |e|
+       assert_text e.entry_date.to_s
+       assert_text e.payee if e.payee
+       assert_text e.memo if e.memo
+     end
+  end
+  test "Show should be able to filter by payee" do
+    account = accounts(:discover)
+    visit account_url(account)
+    payee = "Stop &"
+    find("#payee_contains").fill_in(with: payee)
+    click_on "Filter"
+    expected = account.entries.payee_contains(payee)
+    sleep 2
+    assert_equal expected.count, find_all(".table-row-group .table-row").count
+    expected.each do |e|
+      assert_text e.entry_date.to_s
+      assert_text e.payee
+      assert_text e.memo  if e.memo
+    end
+
+  end
+  test "Show should be able to filter by category" do
+    account = accounts(:discover)
+    visit account_url(account)
+    category = categories(:groceries)
+    find("#category_is").select(category.name)
+    click_on "Filter"
+    expected = account.entries.category_is(category.id)
+    sleep 2
+    rows = find_all(".table-row-group .table-row")
+    assert_equal expected.count, rows.count
+    rows.each do |r|
+      assert_equal category.name, r.find_all('.table-cell')[0].text
+    end
+
+  end
+  test "Should be able to filter between check numbers" do
+    account = accounts(:dcu_checking)
+    visit account_url(account)
+
+    max_check =  Entry.group(:account_id).maximum("check_number")[account.id]
+    min_check =  Entry.group(:account_id).minimum("check_number")[account.id]
+
+    find("#check_after").fill_in(with: min_check + 1)
+
+
+    find("#check_before").fill_in(with: max_check - 1)
+    click_on "Filter"
+    expected  = account.entries.where("check_number <= ? and check_number >= ?",
+                                    max_check - 1, min_check + 1 )
+
+    sleep 2
+    assert_equal expected.count, find_all(".table-row-group .table-row").count
+    expected.each do |e|
+      assert_text e.entry_date.to_s
+      assert_test e.check_number.to_s
+      assert_text e.payee if e.payee
+      assert_text e.memo  if e.memo
+    end
+  end
+  test "Should be able to filter between dates" do
+       account = accounts(:discover)
+       visit account_url(account)
+
+       max_date =  Entry.group(:account_id).maximum("entry_date")[account.id]
+       min_date =  Entry.group(:account_id).minimum("entry_date")[account.id]
+
+       find("#date_after").fill_in(with: min_date + 1)
+
+
+       find("#date_before").fill_in(with: max_date - 1)
+       click_on "Filter"
+       expected  = account.entries.where("entry_date <= ? and entry_date >= ?",
+                                       max_date - 1, min_date + 1 )
+
+       sleep 2
+       assert_equal expected.count, find_all(".table-row-group .table-row").count
+       expected.each do |e|
+         assert_text e.entry_date.to_s
+         assert_text e.payee if e.payee
+         assert_text e.memo  if e.memo
+       end
+  end
+
 end

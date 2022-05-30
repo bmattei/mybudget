@@ -1,13 +1,14 @@
 class Entry < ApplicationRecord
   include Filterable
-  filter_scope :category, Category.all, -> (category_id) {where(category_id: category_id)}
+  filter_scope :category_is, Category.all, -> (category_id) {where(category_id: category_id)}
   filter_scope :payee_contains, :text, ->(str) {where("payee like ?", "%#{str}%")}
-  filter_scope :outflow_greater_than, :money, ->(amount) {where("amount < ?", -(amount.to_f))}
-  filter_scope :outflow_less_than, :money, ->(amount) {where("amount > ? AND amount < ?", -(amount.to_f), 0)}
-  filter_scope :inflow_greater_than, :money, ->(amount) {where("amount > ?", amount.to_f)}
-  filter_scope :inflow_less_than, :money, ->(amount) {where("amount < ? AND amount > ?", amount.to_f, 0)}
-  filter_scope :date_before, :date, -> (date) {where("entry_date < ?", date)}
-  filter_scope :date_after, :date, -> (date) {where("entry_date > ?", date)}
+  filter_scope :amount_greater_than, :money, ->(amount) {where("amount > ?", amount.to_f)}
+  filter_scope :amount_less_than, :money, ->(amount) {where("amount < ?", amount.to_f)}
+  filter_scope :date_before, :date, -> (date) {where("entry_date <= ?", date)}
+  filter_scope :date_after, :date, -> (date) {where("entry_date >= ?", date)}
+  filter_scope :check_after, :number, -> (num) {where("check_number >= ?", num)}
+  filter_scope :check_before, :number, -> (num) {where("check_number <= ?", num)}
+
 
   belongs_to :account
   belongs_to :category, required: false
@@ -37,6 +38,7 @@ class Entry < ApplicationRecord
    transfer_amount = -self.amount
    transfer = Entry.create(account: self.transfer_account,
                            amount: transfer_amount,
+                           payee: "transfer : #{self.account.name}",
                            entry_date: self.entry_date,
                            memo: self.memo,
                            transfer_account: self.account,
@@ -68,7 +70,6 @@ private def manage_transfers
       if !trans_entry.nil?
        trans_entry.clear_balances
        trans_entry.delete
-       puts "LINE 54"
       end
     end
   end
@@ -92,14 +93,8 @@ private def manage_transfers
   def account_name
     account.name
   end
-  def category_or_transfer_account
-    if category
-      category.name
-    elsif transfer_entry
-      transfer_entry.account.name
-    else
-      "UNCATEGORIZED"
-    end
+  def category_name
+      category.name if category
   end
   def inflow
     if amount && amount > 0

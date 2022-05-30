@@ -2,23 +2,26 @@ class EntriesController < ApplicationController
   before_action :set_entry, only: %i[ show edit update destroy ]
   # before_action :set_account, only: %i[ show edit update destroy ]
 
-  def display_columns
-        return [
+  def display_columns(for_show = true)
+        all_columns =  [
                  {model_method: "account_name", column: "accounts.name", label: "Account"},
-                 {model_method: "category_or_transfer_account", column: "categories.name", label: "Category/Transfer"},
+                 {model_method: "category_name", column: "categories.name", label: "Category"},
                  {model_method: "entry_date", column: "entries.entry_date", label: "Entrydate" },
                  {model_method: "check_number", column: "entries.check_number", label: 'check#' },
                  {model_method: "payee", column: "entries.payee", label: "payee" },
+                 {model_method: "memo", column: "entries.memo", label: "memo" },
                  {model_method: "inflow", column: "entries.amount", label: "inflow", as: :money},
                  {model_method: "outflow", column: "entries.amount", label: "outflow", as: :money},
-                 {model_method: "balance", label: "Balance", as: :money}
+                 {model_method: "balance", column: "entries.balance", label: "Balance", as: :money}
                 ]
+        return for_show ? all_columns.slice(1..) : all_columns
   end
   helper_method :display_columns
   # GET /entries or /entries.json
   def index
 
-    @entries = Entry.filter_by(filtering_params).joins(:account).left_outer_joins(:category).order("accounts.name asc").order(entry_date: :asc).order("#{params[:column]} #{params[:direction]}")
+    @entries = Entry.filter_by(filtering_params).left_outer_joins(:category).joins(:account).order(entry_date: :asc).order("#{params[:column]} #{params[:direction]}")
+    # @entries = Entry.filter_by(filtering_params).joins(:account).left_outer_joins(:category).order("accounts.name asc").order(entry_date: :asc).order("#{params[:column]} #{params[:direction]}")
 
   end
 

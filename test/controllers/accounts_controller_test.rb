@@ -29,6 +29,7 @@ class AccountsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+
   test "should get edit" do
     get edit_account_url(@account)
     assert_response :success

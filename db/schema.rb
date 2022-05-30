@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_05_13_125846) do
+ActiveRecord::Schema[7.0].define(version: 2022_05_30_094622) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "plpgsql"
@@ -46,6 +46,27 @@ ActiveRecord::Schema[7.0].define(version: 2022_05_13_125846) do
     t.datetime "updated_at", null: false
     t.index ["account_id"], name: "index_entries_on_account_id"
     t.index ["category_id"], name: "index_entries_on_category_id"
+    t.index ["entry_date"], name: "index_entries_on_entry_date"
+  end
+
+  create_table "ynab_entries", force: :cascade do |t|
+    t.text "account_name"
+    t.text "flag"
+    t.text "cleared"
+    t.integer "check_number"
+    t.date "entry_date"
+    t.text "payee"
+    t.text "category_name"
+    t.text "master_category"
+    t.text "sub_category"
+    t.text "memo"
+    t.decimal "outflow", precision: 13, scale: 4
+    t.decimal "inflow", precision: 13, scale: 4
+    t.decimal "balance", precision: 13, scale: 4
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_name"], name: "index_ynab_entries_on_account_name"
+    t.index ["entry_date"], name: "index_ynab_entries_on_entry_date"
   end
 
   add_foreign_key "entries", "accounts"
