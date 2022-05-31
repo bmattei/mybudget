@@ -16,8 +16,6 @@
     </div>
     <div>
       <%= form.number_field :amount_greater_than, in: -1000000..100000, step: 0.01,value: params[:amount_greater_than]%>
-    </div>
-    <div>
       <%= form.number_field :amount_less_than, in: -1000000..1000000, step: 0.01, value: params[:amount_less_than] %>
     </div>
     <div>
@@ -31,8 +29,6 @@
     </div>
     <div>
       <%= form.number_field :check_after, in: 1..90000 , step: 1, value: params[:check_after] %>
-    </div>
-    <div>
       <%= form.number_field :check_before, in: 1..90000 , step: 1, value: params[:check_before] %>
     </div>
     <div>

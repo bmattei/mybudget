@@ -159,6 +159,7 @@ class AccountsTest < ApplicationSystemTestCase
   test "should be able to sort by Number" do
     visit accounts_url
     click_on "Number"
+    assert_text "New"
     rows_count = all(".table-row-group>.table-row").count
     last_number = all( ".table-row-group>.table-row:nth-child(1)>.table-cell:nth-child(3)").first.text
     (2..rows_count).each do |i|
@@ -167,7 +168,7 @@ class AccountsTest < ApplicationSystemTestCase
     end
     click_on "Number"
     # I think I need this because of turbo
-    sleep(3)
+    assert_text "New"
 
     last_number = all( ".table-row-group>.table-row:nth-child(1)>.table-cell:nth-child(3)").first.text
     (2..rows_count).each do |i|
