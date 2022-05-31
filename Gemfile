@@ -76,3 +76,5 @@ end
 
 gem "chartkick"
 gem "csv"
+gem "pghero"
+gem "pg_query", ">= 0.9.0"

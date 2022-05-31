@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_05_31_110508) do
+ActiveRecord::Schema[7.0].define(version: 2022_05_31_145410) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
+  enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
 
   create_table "accounts", force: :cascade do |t|
@@ -46,8 +47,21 @@ ActiveRecord::Schema[7.0].define(version: 2022_05_31_110508) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["account_id"], name: "index_entries_on_account_id"
+    t.index ["amount"], name: "index_entries_on_amount"
     t.index ["category_id"], name: "index_entries_on_category_id"
+    t.index ["entry_date", "amount"], name: "index_entries_on_entry_date_and_amount"
     t.index ["entry_date"], name: "index_entries_on_entry_date"
+  end
+
+  create_table "pghero_query_stats", force: :cascade do |t|
+    t.text "database"
+    t.text "user"
+    t.text "query"
+    t.bigint "query_hash"
+    t.float "total_time"
+    t.bigint "calls"
+    t.datetime "captured_at", precision: nil
+    t.index ["database", "captured_at"], name: "index_pghero_query_stats_on_database_and_captured_at"
   end
 
   create_table "ynab_entries", force: :cascade do |t|

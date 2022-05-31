@@ -9,10 +9,11 @@
     <h1 class="font-bold text-4xl"><%= @account.name %></h1>
   </div>
 
-  <%= render "/entries/table", records: @entries, display_columns: EntriesController.new.display_columns %>
   <div class='my-4'>
     <%= link_to 'New', new_entry_path(:account_id => @account.id), data: {turbo_frame: "_top", account:@account}, class: "btn-primary" %>
   </div>
+  <%= render "/entries/table", records: @entries, display_columns: EntriesController.new.display_columns %>
+
 
   <% content_for :right do %>
 

@@ -31,10 +31,12 @@ class AccountsController < ApplicationController
   # GET /accounts/1 or /accounts/1.json
   def show
     @account = Account.find(params[:id])
+    filters = params.slice(*Entry.filter_scopes)
+    params[:date_after] = Date.today - 6.months if filters.keys.count == 0
     @entries = @account.entries.filter_by(params.slice(*Entry.filter_scopes)).
     left_outer_joins(:category).
     order("#{params[:column]} #{params[:direction]}").
-    order(entry_date: :asc).order(amount: :desc)
+    order(entry_date: :desc).order(amount: :desc)
 
 
   end
