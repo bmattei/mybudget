@@ -7,10 +7,13 @@
             <%= sort_link(column_info[:label].titleize, column_info[:column]) %>
        </div>
       <% end %>
-      <% if !defined?(allow_edit) || allow_edit %>
+      <% if allow_show %>
       <div class="table-cell px-2 py-4 text-transparent">EDIT</div>
       <% end %>
-      <% if !defined?(allow_delete) || allow_delete %>
+      <% if allow_edit %>
+      <div class="table-cell px-2 py-4 text-transparent">EDIT</div>
+      <% end %>
+      <% if allow_delete%>
       <div class="table-cell px-2 py-4 text-transparent">DELETE</div>
       <% end %>
 
@@ -25,12 +28,17 @@
             <%= as(rec.send(column_info[:model_method]),column_info[:as]) %>
           </div>
         <% end %>
-        <% if !defined?(allow_edit) || allow_edit %>
+        <% if allow_show %>
+        <div class="table-cell">
+          <%= link_to 'Show', url_for(rec), data: {turbo_frame: "_top"}, class: "btn-small"%>
+        </div>
+        <% end %>
+        <% if allow_edit %>
         <div class="table-cell">
           <%= link_to 'Edit', url_for([:edit, rec]), data: {turbo_frame: "_top"}, class: "btn-small"%>
         </div>
         <% end %>
-        <% if !defined?(allow_delete) || allow_delete %>
+        <% if allow_delete %>
         <div class="table-cell">
          <%= link_to 'Delete', url_for(rec), method: :delete,  data: {turbo_frame: "_top",  turbo_method: :delete, turbo_confirm: "Are you sure?"}, class: "btn-small" %>
         </div>

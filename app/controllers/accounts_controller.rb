@@ -1,13 +1,24 @@
 class AccountsController < ApplicationController
   before_action :set_account, only: %i[ show edit update destroy ]
-
+  helper_method :display_columns, :allow_edit, :allow_show, :allow_delete
   def display_columns
         return [{model_method: "bank", column: "bank", label: "bank"},
                 {model_method: "name", column: "name", label: "name" },
                 {model_method: "number", column: "number", label: "Number"},
                 {model_method: "has_checking", column: "has_checking", label: "Checking"}]
   end
-  helper_method :display_columns
+
+  def allow_edit
+      true
+  end
+  def allow_show
+      true
+  end
+  def allow_delete
+      true
+  end
+
+
   private def filtering_params
     params.slice(*Account.filter_scopes)
   end
@@ -87,6 +98,6 @@ class AccountsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def account_params
-      params.require(:account).permit(:name, :number, :bank, :has_checking)
+      params.require(:account).permit(:name, :number, :bank, :has_checking, :in_menu)
     end
 end

@@ -1,5 +1,7 @@
 class EntriesController < ApplicationController
   before_action :set_entry, only: %i[ show edit update destroy ]
+  helper_method :display_columns, :allow_edit, :allow_delete, :allow_show
+
   # before_action :set_account, only: %i[ show edit update destroy ]
 
   def display_columns(for_show = true)
@@ -16,7 +18,17 @@ class EntriesController < ApplicationController
                 ]
         return for_show ? all_columns.slice(1..) : all_columns
   end
-  helper_method :display_columns
+  def allow_edit
+      true
+  end
+  def allow_show
+      false
+  end
+  def allow_delete
+      true
+  end
+
+
   # GET /entries or /entries.json
   def index
 

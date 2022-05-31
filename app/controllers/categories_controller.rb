@@ -1,10 +1,20 @@
 class CategoriesController < ApplicationController
   before_action :set_category, only: %i[ show edit update destroy ]
+  helper_method :display_columns, :allow_edit, :allow_delete, :allow_show
   def display_columns
         return [{model_method: "name", column: "name", label: "name"},
           {model_method: "super", column: "categories_categories.name", label: "super" }]
   end
-  helper_method :display_columns
+  def allow_edit
+      true
+  end
+  def allow_show
+      false
+  end
+  def allow_delete
+      true
+  end
+
 
 
   def index
