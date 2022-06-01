@@ -13,6 +13,9 @@
     </div>
   <% end %>
 
+  <%= form.hidden_field :referrer, value: request.referrer %>
+
+
   <div class="my-5">
     <% if !entry.account %>
     <%= form.collection_select :account_id, Account.all, :id, :name, class: "basic-field" %>
@@ -64,7 +67,7 @@
     <%= form.submit class: "btn-small" %>
   </div>
   <div class="inline">
-    <%= link_to "Cancel", account_url(entry.account), data: { turbo_frame: "_top"}, class: "btn-small" %>
+    <%= link_to "Cancel", request.referrer, data: { turbo_frame: "_top"}, class: "btn-small" %>
   </div>
 <% end %>
 </div>

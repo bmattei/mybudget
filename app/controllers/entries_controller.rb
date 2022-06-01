@@ -7,6 +7,7 @@ class EntriesController < ApplicationController
   def display_columns(for_show = true)
         all_columns =  [
                  {model_method: "account_name", column: "accounts.name", label: "Account"},
+                 {model_method: "cleared", colomn: "account.cleared", label:"Cleared"},
                  {model_method: "category_name", column: "categories.name", label: "Category"},
                  {model_method: "entry_date", column: "entries.entry_date", label: "Entrydate" },
                  {model_method: "check_number", column: "entries.check_number", label: 'check#' },
@@ -75,9 +76,11 @@ class EntriesController < ApplicationController
 
   # GET /entries/new
   def new
+    @referrer = request.referrer
     @entry = Entry.new
     @entry.account_id = params[:account_id]
     @entry.entry_date = Date.today
+
   end
 
   # GET /entries/1/edit
@@ -86,10 +89,11 @@ class EntriesController < ApplicationController
 
   # POST /entries or /entries.json
   def create
+    referrer = params[:entry][:referrer]
     @entry = Entry.new(entry_params)
     respond_to do |format|
       if @entry.save
-        format.html { redirect_to account_url(@entry.account), notice: "Entry was successfully created." }
+        format.html { redirect_to referrer, notice: "Entry was successfully created." }
         format.json { render :show, status: :created, location: @entry }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -100,9 +104,10 @@ class EntriesController < ApplicationController
 
   # PATCH/PUT /entries/1 or /entries/1.json
   def update
+    referrer = params[:entry][:referrer]
     respond_to do |format|
       if @entry.update(entry_params)
-        format.html { redirect_to account_url(@entry.account), notice: "Entry was successfully updated." }
+        format.html { redirect_to referrer, notice: "Entry was successfully updated." }
         format.json { render :show, status: :ok, location: @entry }
       else
         format.html { render :edit, status: :unprocessable_entity }

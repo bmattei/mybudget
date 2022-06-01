@@ -1,12 +1,12 @@
 *  1  Top Menu has too many entries and some of the buttons overlap
-   
+
   - I think the easiest solution for now is to add a flag to the accounts
     that specifies if the account should appear in the menu.
   - If I do this I need to add show buttons to the account index page.
-  MOD - added in_menu field to account.
+  FIXED - added in_menu field to account.
         added show to account view page.
 	changed _top_menu to only show accounts that have in_menu set.
-
+  NEEDS TEST
 
 *  2 Sort indicator is sometimes under text.
 
@@ -14,11 +14,20 @@
   and other ranges on two
 
   FIXED - all ranges now on one line.
+  NEEDS TEST but not sure how to do it.
 
 *  4 The entrydate on show page wraps.
 
 * 5 Entries take too long to render on account show page.
  - I need to speed this up and or paginate.
+ - FIXED - FOR NOW I FILTER BY START DATE IF NOT FILTERS ARE PASSED.
+ - NEEDS TEST
 
+ * 6 NEED an ETL To READ DOWNLOADED DISCOVER Transactions
 
+ * 7 NEED an ETL to READ DONLOADED DCU Transaction
 
+ * ON ACCOUNT SHOW PAGE IF YOU BRING UP a New or Edit Menu you lose the filters
+   FIXED THIS I used the request.referrer to specify the link associated with the cancel button
+         I pass the referrer as a hidden field in the form and use it in create and update to the new or edit
+         to set the redirect path.

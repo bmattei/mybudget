@@ -39,6 +39,6 @@
     <%= form.submit class: "btn-small" %>
   </div>
   <div class="inline">
-    <%= link_to "Cancel", accounts_url, data: { turbo_frame: "_top"}, class: "btn-small" %>
+    <%= link_to "Cancel", request.referrer, data: { turbo_frame: "_top"}, class: "btn-small" %>
   </div>
 <% end %>

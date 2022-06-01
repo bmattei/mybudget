@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_05_31_145410) do
+ActiveRecord::Schema[7.0].define(version: 2022_05_31_202009) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_stat_statements"
@@ -46,6 +46,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_05_31_145410) do
     t.bigint "category_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "cleared"
     t.index ["account_id"], name: "index_entries_on_account_id"
     t.index ["amount"], name: "index_entries_on_amount"
     t.index ["category_id"], name: "index_entries_on_category_id"
