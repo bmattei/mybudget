@@ -27,7 +27,7 @@
 
  * 7 NEED an ETL to READ DONLOADED DCU Transaction
 
- * ON ACCOUNT SHOW PAGE IF YOU BRING UP a New or Edit Menu you lose the filters
+ * 8 ON ACCOUNT SHOW PAGE IF YOU BRING UP a New or Edit Menu you lose the filters
    FIXED THIS I used the request.referrer to specify the link associated with the cancel button
          I pass the referrer as a hidden field in the form and use it in create and update to the new or edit
          to set the redirect path.
