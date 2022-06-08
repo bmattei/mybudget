@@ -7,10 +7,10 @@ class EntryTest < ActiveSupport::TestCase
     end
   end
   test "balance should be correct" do
-    assert_equal  5000, entries(:dcu_checking_init).balance
-    assert_equal  4900, entries(:dcu_checking_buy_gas_1).balance
-    assert_equal  4800, entries(:dcu_checking_buy_gas_2).balance
-    assert_equal  4700, entries(:dcu_checking_buy_gas_3).balance
+    assert_equal  5000, entries(:dcu_checking_init).balance.to_f
+    assert_equal  4900, entries(:dcu_checking_buy_gas_1).balance.to_f
+    assert_equal  4800, entries(:dcu_checking_buy_gas_2).balance.to_f
+    assert_equal  4700, entries(:dcu_checking_buy_gas_3).balance.to_f
 
   end
   test 'Balances should updated correctly when an new entry is created' do
@@ -23,10 +23,10 @@ class EntryTest < ActiveSupport::TestCase
                          amount: amount,
                          entry_date: entry_date)
     assert_not_nil entry
-    assert_equal entry.balance.to_f, 4990.to_f
-    assert_equal entries(:dcu_checking_buy_gas_1).balance.to_f, 4890.to_f
-    assert_equal entries(:dcu_checking_buy_gas_2).balance.to_f, 4790.to_f
-    assert_equal entries(:dcu_checking_buy_gas_3).balance.to_f, 4690.to_f
+    assert_equal 4990.to_f, entry.balance.to_f
+    assert_equal  4890.to_f, entries(:dcu_checking_buy_gas_1).balance.to_f
+    assert_equal 4790.to_f,entries(:dcu_checking_buy_gas_2).balance.to_f
+    assert_equal 4690.to_f, entries(:dcu_checking_buy_gas_3).balance.to_f
   end
   test 'Balances should updated correctly when an entry is updated' do
     e = entries(:dcu_checking_init)
@@ -175,8 +175,8 @@ class EntryTest < ActiveSupport::TestCase
      entry.update(category: nil, payee: nil, amount: amount, transfer_account: accounts(:discover))
      Entry.all.each do |e|
        calc_balance = e.account.entries.
-                           where("entry_date < ? or (entry_date = ? and (amount > ? or (amount = ? and id <= ?)))",
-                                 e.entry_date, e.entry_date, e.amount, e.amount, e.id).sum(:amount)
+                           where("entry_date < ? or (entry_date = ? and id <= ?)",
+                                 e.entry_date, e.entry_date, e.id).sum(:amount)
        assert_equal calc_balance.to_f, e.balance.to_f
      end
   end
@@ -195,8 +195,8 @@ class EntryTest < ActiveSupport::TestCase
                                 payee: "A1 Auto")
     Entry.all.each do |e|
       calc_balance = e.account.entries.
-                            where("entry_date < ? or (entry_date = ? and (amount > ? or (amount = ? and id <= ?)))",
-                                        e.entry_date, e.entry_date, e.amount, e.amount, e.id).sum(:amount)
+                            where("entry_date < ? or (entry_date = ? and id <= ?)",
+                                        e.entry_date, e.entry_date,  e.id).sum(:amount)
       assert_equal calc_balance.to_f, e.balance.to_f
     end
 

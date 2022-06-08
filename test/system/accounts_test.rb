@@ -1,6 +1,15 @@
 require "application_system_test_case"
 
 class AccountsTest < ApplicationSystemTestCase
+  CATEGORY_COL = 1
+  DATE_COL = 2
+  CHECK_COL = 3
+  PAYEE_COL = 4
+  MEMO_COL = 5
+  INFLOW_COL = 6
+  OUTFLOW_COL = 7
+  BALANCE_COL = 8
+
   setup do
     @account = accounts(:dcu_checking)
   end
@@ -255,16 +264,16 @@ class AccountsTest < ApplicationSystemTestCase
     visit account_url(account)
     rows = find_all(".table-row-group .table-row")
     i = 0
-    account.entries.order(entry_date: :asc).each do |e|
+    account.entries.order(entry_date: :desc).each do |e|
       columns = rows[i].find_all('.table-cell')
-      assert_equal e.category.name, columns[0].text if e.category.name
-      assert_equal e.entry_date.to_s, columns[1].text
-      assert_equal e.check_number.to_s, columns[2].text if e.check_number
-      assert_equal e.payee, columns[3].text if e.payee
-      assert_equal e.memo, columns[4].text if e.memo
-      assert_equal e.amount.to_f, columns[5].text.tr('$,','').to_f if e.amount > 0
-      assert_equal e.amount.abs.to_f, columns[6].text.tr('$,','').to_f if e.amount < 0
-      assert_equal e.balance.to_f, columns[7].text.tr('$,','').to_f
+      assert_equal e.category.name, columns[CATEGORY_COL].text if e.category.name
+      assert_equal e.entry_date.to_s, columns[DATE_COL].text
+      assert_equal e.check_number.to_s, columns[CHECK_COL].text if e.check_number
+      assert_equal e.payee, columns[PAYEE_COL].text if e.payee
+      assert_equal e.memo, columns[MEMO_COL].text if e.memo
+      assert_equal e.amount.to_f, columns[INFLOW_COL].text.tr('$,','').to_f if e.amount > 0
+      assert_equal e.amount.abs.to_f, columns[OUTFLOW_COL].text.tr('$,','').to_f if e.amount < 0
+      assert_equal e.balance.to_f, columns[BALANCE_COL].text.tr('$,','').to_f
       i += 1
     end
   end
@@ -326,7 +335,7 @@ class AccountsTest < ApplicationSystemTestCase
     rows = find_all(".table-row-group .table-row")
     assert_equal expected.count, rows.count
     rows.each do |r|
-      assert_equal category.name, r.find_all('.table-cell')[0].text
+      assert_equal category.name, r.find_all('.table-cell')[CATEGORY_COL].text
     end
 
   end
@@ -376,6 +385,58 @@ class AccountsTest < ApplicationSystemTestCase
          assert_text e.payee if e.payee
          assert_text e.memo  if e.memo
        end
+  end
+  test "should be able to link to account with filters" do
+    filter_date = Date.today - 300
+    visit account_url({id:@account.id, date_after: filter_date})
+    assert_equal filter_date.to_s, find("#date_after").value
+  end
+  test "New form cancel should link back to show page with filters" do
+    filter_date_after = Date.today - 300
+    filter_date_before = Date.today - 100
+    visit account_url({id:@account.id,
+      date_after: filter_date_after,
+      date_before: filter_date_before})
+    click_on 'New'
+    assert_text 'Cancel'
+    click_on 'Cancel'
+    assert_equal filter_date_after.to_s, find("#date_after").value
+    assert_equal filter_date_before.to_s, find("#date_before").value
+  end
+  test "Create entry should return to show page with filters" do
+    filter_date_after = Date.today - 300
+    filter_date_before = Date.today - 2
+    visit account_url({id:@account.id,
+      date_after: filter_date_after,
+      date_before: filter_date_before})
+    click_on 'New'
+    assert_text 'Cancel'
+    payee = "Money Taker Grocery Store"
+    find("#entry_payee").fill_in(with: payee)
+
+    find("#entry_entry_date").fill_in with: filter_date_before
+    category = categories(:groceries)
+    find("#entry_category_id").select(category.name)
+    find("#entry_outflow").fill_in(with: "176.89")
+    click_on "Create Entry"
+    assert_equal filter_date_after.to_s, find("#date_after").value
+    assert_equal filter_date_before.to_s, find("#date_before").value
+    assert_text payee
+  end
+  test "Edit entry should return to show page with filters" do
+    filter_date_after = Date.today - 300
+    filter_date_before = Date.today - 20
+    visit account_url({id:@account.id,
+      date_after: filter_date_after,
+      date_before: filter_date_before})
+    click_on 'Edit', match: :first
+    assert_text 'Cancel'
+    payee = "Change Payee $$$"
+    find("#entry_payee").fill_in(with: payee)
+    click_on "Update Entry"
+    assert_equal filter_date_after.to_s, find("#date_after").value
+    assert_equal filter_date_before.to_s, find("#date_before").value
+    assert_text payee
   end
 
 end

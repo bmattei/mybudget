@@ -36,3 +36,18 @@
 .\#*
 \#*
 *~
+
+# ignore the etl data files
+/etl/discover/*
+
+# ignore dump files
+*.dump
+
+# ignore md files
+*.md
+
+*.csv
+
+*.pdf
+
+etl/temp

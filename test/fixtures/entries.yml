@@ -1,44 +1,54 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 dcu_checking_init:
+  id: 100
   account: dcu_checking
-  entry_date: 2021-01-01
+  entry_date: <%= (Date.today - 9.months).to_s %>
   amount: 5000.00
   category: misc_income
   memo: "dcu checking init"
 
 dcu_checking_buy_gas_1:
+  id: 101
   account: dcu_checking
-  entry_date: 2021-01-01
+  entry_date: <%= (Date.today - 9.months + 1).to_s %>
   check_number: 232
   payee: "Shell"
+  memo: "dcu_checking_buy_gas_1"
   amount: -100
   category: auto_gas
 
 dcu_checking_buy_gas_2:
+  id: 102
   account: dcu_checking
-  entry_date: 2021-01-02
+  entry_date: <%= (Date.today - 8.months).to_s %>
   check_number: 233
   payee: "Shell"
+  memo: "dcu_checking_buy_gas_2"
   amount: -100
   category: auto_gas
 
 dcu_checking_buy_gas_3:
+  id: 103
   account: dcu_checking
-  entry_date: 2021-02-01
+  entry_date: <%= (Date.today - 8.months).to_s %>
   payee: "Shell"
   amount: -100
+  memo: "dcu_checking_buy_gas_3"
   category: auto_gas
 
 dcu_checking_deposit:
+  id: 104
   account: dcu_checking
-  entry_date: 2021-02-02
+  entry_date: <%= (Date.today - 7.months).to_s %>
   payee: "SweetWater"
+  memo: "dcu_checking_deposit"
   amount: 500
   category: income
 
 dcu_checking_buy_groceries:
+  id: 105
   account: discover
-  entry_date: 2022-02-09
+  entry_date: <%= (Date.today - 5.months).to_s %>
   check_number: 239
   payee: Stop & Shop
   amount: -125.23
@@ -48,7 +58,7 @@ dcu_checking_buy_groceries:
 
 discover_init:
   account: discover
-  entry_date: 2021-01-01
+  entry_date: <%= (Date.today - 10.months).to_s %>
   amount: -954.89
   category: misc
   memo: "discover init"
@@ -56,7 +66,7 @@ discover_init:
 
 discover_fix_car:
   account: discover
-  entry_date: 2021-05-29
+  entry_date: <%= (Date.today - 9.months).to_s %>
   payee: "A1 Auto"
   amount: -112.00
   transfer_account_id:
@@ -66,7 +76,7 @@ discover_fix_car:
 
 discover_eat_out:
   account: discover
-  entry_date: 2021-12-05
+  entry_date: <%= (Date.today - 8.months).to_s %>
   payee: Linguines
   amount: -85.10
   category: restaurants
@@ -74,7 +84,7 @@ discover_eat_out:
 
 discover_eat_out2:
   account: discover
-  entry_date: 2022-02-06
+  entry_date: <%= (Date.today - 6.months).to_s %>
   payee: Chipolte
   amount: -55.00
   category: restaurants
@@ -82,7 +92,7 @@ discover_eat_out2:
 
 discover_eat_out3:
   account: discover
-  entry_date: 2021-08-11
+  entry_date: <%= (Date.today - 8.months).to_s %>
   payee: Linguines
   amount: -85.10
   category: restaurants
@@ -90,7 +100,7 @@ discover_eat_out3:
 
 discover_buy_groceries:
   account: discover
-  entry_date: 2022-02-09
+  entry_date: <%= (Date.today - 6.months).to_s %>
   payee: Stop & Shop
   amount: -155.00
   category: groceries
@@ -98,7 +108,7 @@ discover_buy_groceries:
 
 discover_buy_groceries2:
   account: discover
-  entry_date: 2022-02-10
+  entry_date: <%= (Date.today - 7.months).to_s %>
   payee: Market Basket
   amount: -135.00
   category: groceries

@@ -1,0 +1,23 @@
+class CreateYnabEntries < ActiveRecord::Migration[7.0]
+  def change
+    create_table :ynab_entries do |t|
+      t.text :account_name
+      t.text :flag
+      t.text :cleared
+      t.integer :check_number
+      t.date :entry_date
+      t.text :payee
+      t.text :category_name
+      t.text :master_category
+      t.text :sub_category
+      t.text :memo
+      t.decimal :outflow, precision: 13, scale: 4
+      t.decimal :inflow, precision: 13, scale: 4
+      t.decimal :balance, precision: 13, scale: 4
+
+      t.timestamps
+    end
+    add_index :ynab_entries, :account_name
+    add_index :ynab_entries, :entry_date
+  end
+end

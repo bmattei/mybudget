@@ -2,8 +2,8 @@ class Entry < ApplicationRecord
   include Filterable
   filter_scope :category_is, Category.all, -> (category_id) {where(category_id: category_id)}
   filter_scope :payee_contains, :text, ->(str) {where("payee like ?", "%#{str}%")}
-  filter_scope :amount_greater_than, :money, ->(amount) {where("amount > ?", amount.to_f)}
-  filter_scope :amount_less_than, :money, ->(amount) {where("amount < ?", amount.to_f)}
+  filter_scope :amount_greater_than, :money, ->(amount) {where("amount >= ?", amount.to_f)}
+  filter_scope :amount_less_than, :money, ->(amount) {where("amount <= ?", amount.to_f)}
   filter_scope :date_before, :date, -> (date) {where("entry_date <= ?", date)}
   filter_scope :date_after, :date, -> (date) {where("entry_date >= ?", date)}
   filter_scope :check_after, :number, -> (num) {where("check_number >= ?", num)}
@@ -82,10 +82,8 @@ private def manage_transfers
 
   def balance
     if !self[:balance]
-      calc_balance = self.account.entries.
-                          where("entry_date < ? or (entry_date = ? and (amount > ? or (amount = ? and id < ?)))",
-                                self.entry_date, self.entry_date, self.amount, self.amount, self.id).sum(:amount) + self.amount
-
+      calc_balance = self.account.entries.where("entry_date < ? or (entry_date = ? and id <= ? )",
+                      self.entry_date, self.entry_date,  self.id).sum(:amount)
       self.update_column(:balance, calc_balance)
     end
     self[:balance]

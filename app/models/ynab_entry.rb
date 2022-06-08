@@ -1,0 +1,2 @@
+class YnabEntry < ApplicationRecord
+end

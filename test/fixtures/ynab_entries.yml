@@ -1,0 +1,31 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  account_name: MyText
+  flag: MyText
+  cleared: MyText
+  check_number: 1
+  entry_date: 2022-06-03
+  payee: MyText
+  category_name: MyText
+  master_category: MyText
+  sub_category: MyText
+  memo: MyText
+  outflow: 9.99
+  inflow: 9.99
+  balance: 9.99
+
+two:
+  account_name: MyText
+  flag: MyText
+  cleared: MyText
+  check_number: 1
+  entry_date: 2022-06-03
+  payee: MyText
+  category_name: MyText
+  master_category: MyText
+  sub_category: MyText
+  memo: MyText
+  outflow: 9.99
+  inflow: 9.99
+  balance: 9.99

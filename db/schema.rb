@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_05_31_202009) do
+ActiveRecord::Schema[7.0].define(version: 2022_06_06_211316) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_stat_statements"
@@ -33,6 +33,17 @@ ActiveRecord::Schema[7.0].define(version: 2022_05_31_202009) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "disentries", force: :cascade do |t|
+    t.date "trans_date"
+    t.date "post_date"
+    t.text "description"
+    t.decimal "amount", precision: 13, scale: 4
+    t.text "category"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.text "file"
+  end
+
   create_table "entries", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.date "entry_date"
@@ -47,9 +58,11 @@ ActiveRecord::Schema[7.0].define(version: 2022_05_31_202009) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "cleared"
+    t.bigint "disentry_id"
     t.index ["account_id"], name: "index_entries_on_account_id"
     t.index ["amount"], name: "index_entries_on_amount"
     t.index ["category_id"], name: "index_entries_on_category_id"
+    t.index ["disentry_id"], name: "index_entries_on_disentry_id"
     t.index ["entry_date", "amount"], name: "index_entries_on_entry_date_and_amount"
     t.index ["entry_date"], name: "index_entries_on_entry_date"
   end
@@ -87,4 +100,5 @@ ActiveRecord::Schema[7.0].define(version: 2022_05_31_202009) do
 
   add_foreign_key "entries", "accounts"
   add_foreign_key "entries", "categories"
+  add_foreign_key "entries", "disentries"
 end
