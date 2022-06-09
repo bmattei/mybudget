@@ -1,3 +1,9 @@
+#
+#   This empties the disentries table and loads the data from
+#   the statements downloaded from discover.  The statements
+#   have three different formats and there is  class for handling
+#   each of them.
+#
 $LOAD_PATH << '.'
 $LOAD_PATH << './etl'
 require 'config/environment'

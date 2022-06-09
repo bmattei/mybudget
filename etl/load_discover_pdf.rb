@@ -1,3 +1,12 @@
+#
+#   This class is responsible for reading discover pdf statements from discover.
+#   It loads the transaction data in disentries.  The file format changed after
+#   2020-02-01 this reads the older format.
+#    c
+#    None of this ETL code is particularly pretty but this code is UGLY.
+#    TODO: If it turns out I need to use this code in the future it should probably
+#    be cleaned up.
+#
 $LOAD_PATH << '.'
 $LOAD_PATH << './etl'
 require 'config/environment'
@@ -44,6 +53,7 @@ class LoadDiscoverPdf
     end
     total_purchases.round(2)
   end
+
   def verify_payments_and_credits
     purchases = get_total_purchases
     credits = get_total_credits
@@ -89,7 +99,7 @@ class LoadDiscoverPdf
     end
     puts "#{@category.slice(0..10)}\t#{trans_date}\t#{post_date}\t#{payee.slice(0..20)}\t #{amount}\t(#{amount_value.to_f}}  "
 
-    Disentry.create(category: category, post_date: post_date, description: payee, trans_date: trans_date, amount: amount_value)
+    Disentry.create(category: @category, post_date: post_date, description: payee, trans_date: trans_date, amount: amount_value)
 
   end
   def load_transactions

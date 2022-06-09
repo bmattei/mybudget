@@ -1,3 +1,9 @@
+#
+#   This class is responsible for reading discover pdf statements from discover.
+#   It loads the transaction data in disentries.  The file format changed after
+#   2020-02-01 this reads the newer format.
+#
+
 $LOAD_PATH << '.'
 $LOAD_PATH << './etl'
 require 'config/environment'

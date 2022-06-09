@@ -19,7 +19,7 @@ class AccountsController < ApplicationController
     @entries = @account.entries.filter_by(params.slice(*Entry.filter_scopes)).
     left_outer_joins(:category).
     order("#{params[:column]} #{params[:direction]}").
-    order(entry_date: :desc).order(id: :asc)
+    order(entry_date: :desc).order(id: :desc)
     @sum = @entries.sum(:amount)
   end
 
