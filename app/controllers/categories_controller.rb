@@ -3,6 +3,7 @@ class CategoriesController < ApplicationController
   helper_method :display_columns, :allow_edit, :allow_delete, :allow_show
   def display_columns
         return [{model_method: "name", column: "name", label: "name"},
+          {model_method: "active", column: "active", label: "active"},
           {model_method: "super", column: "categories_categories.name", label: "super" }]
   end
   def allow_edit
@@ -18,10 +19,10 @@ class CategoriesController < ApplicationController
 
 
   def index
-    @categories = Category.left_outer_joins(:category).filter_by(filtering_params).order("#{params[:column]} #{params[:direction]}")
+    @categories = Category.order(active: :desc).order(:name).left_outer_joins(:category).filter_by(filtering_params).order("#{params[:column]} #{params[:direction]}")
     @allow_delete = false
     @allow_edit = false
-    return @categories
+    # return @categories
   end
 
   # GET /categories/1 or /categories/1.json
@@ -88,6 +89,6 @@ class CategoriesController < ApplicationController
     end
     # Only allow a list of trusted parameters through.
     def category_params
-      params.require(:category).permit(:name, :category_id, :level)
+      params.require(:category).permit(:name, :active, :category_id, :level)
     end
 end

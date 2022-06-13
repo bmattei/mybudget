@@ -59,6 +59,7 @@ private def delete_other_transfer_entry
 end
 private def manage_transfers
     if self.transfer_account
+      self.payee = "transfer: #{self.transfer_account.name}"
       if !self.transfer_entry
         add_transfer_entry
       else

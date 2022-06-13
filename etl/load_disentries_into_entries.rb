@@ -1,17 +1,22 @@
 $LOAD_PATH << '.'
 $LOAD_PATH << './etl'
 require 'config/environment'
+
+
+# Load discover data from Disentries in entries table (Entry Model)
 class LoadDisentriesIntoEntries
 
-  def initialize(real_deal: false, initial_date: Date.new(2015,5,14), initial_balance: -1797.58,
-                 expected_balance: -3955.26)
+  def initialize(real_deal: false, initial_date: Date.new(2015,5,14), initial_balance: nil,
+                 expected_balance: 0, cleanup: false)
 
+    @cleanup = cleanup
     @initial_date = initial_date
     @initial_balance = initial_balance
     @real_deal = real_deal
     @expected_balance = expected_balance
-    @balance = @initial_balance
     @discover =  Account.where(name: "Discover Card").first|| raise("Bad Account")
+    @balance = @initial_balance || @discover.balance
+
     @dcu_checking =  Account.where(name: "DCU CHECKING").first|| raise("Bad Account")
 
     @category_initial_balance = Category.where(name: "Initial Balance").first ||  raise("Bad Category")
@@ -129,19 +134,21 @@ class LoadDisentriesIntoEntries
     destroy_entries = @discover.entries
     puts " delete: #{delete_entries.to_sql} "
     puts " destroy #{destroy_entries.to_sql}"
-    puts "entry_date: #{@inital_date},  payee: INITIAL BALANCE, amount: #{@inital_balance}, category:{@category_initial_balance.name}"
+    puts "entry_date: #{@initial_date},  payee: INITIAL BALANCE, amount: #{@initial_balance}, category:{@category_initial_balance.name}"
     if @real_deal
       delete_entries.entries
       destroy_entries.destroy_all
-      @discover.entries.create(entry_date: @initial_date, payee: "INITIAL BALANCE",
-        amount: @initial_balance, category: @category_initial_balance, memo: "ETL SPECIFIED INIT BALANCE")
+      if @initial_balance
+        @discover.entries.create(entry_date: @initial_date, payee: "INITIAL BALANCE",
+          amount: @initial_balance, category: @category_initial_balance, memo: "ETL SPECIFIED INIT BALANCE")
+      end
     end
 
   end
-  def run_import
-    cleanup_before_import
+  def load
+    cleanup_before_import if @cleanup
 
-    rows = Disentry.order(post_date: :asc)
+    rows = Disentry.where("post_date >= ?", @initial_date).order(post_date: :asc)
     rows.each do |row|
         @balance += row.amount
         category = map_to_app_category(row.description, row.category,row.amount)
@@ -170,5 +177,5 @@ class LoadDisentriesIntoEntries
 end
 if __FILE__ == $0
   etl = LoadDisentriesIntoEntries.new(real_deal: true)
-  etl.run_import
+  etl.load
 end

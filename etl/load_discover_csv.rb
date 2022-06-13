@@ -1,6 +1,9 @@
 $LOAD_PATH << '.'
 $LOAD_PATH << './etl'
 require 'config/environment'
+#
+# Read discover csv file and load data in DisEntry Model
+#
 class LoadDiscoverCsv
   Trans_Date = 0
   Post_Date = 1

@@ -2,7 +2,7 @@
 #   This class is responsible for reading discover pdf statements from discover.
 #   It loads the transaction data in disentries.  The file format changed after
 #   2020-02-01 this reads the older format.
-#    c
+#
 #    None of this ETL code is particularly pretty but this code is UGLY.
 #    TODO: If it turns out I need to use this code in the future it should probably
 #    be cleaned up.

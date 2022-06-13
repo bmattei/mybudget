@@ -10,9 +10,140 @@ class AccountsTest < ApplicationSystemTestCase
   OUTFLOW_COL = 7
   BALANCE_COL = 8
 
+
+
   setup do
     @account = accounts(:dcu_checking)
+    @entry = entries(:discover_init)
   end
+
+  # Theses tests were moved from entry test to here
+  test "should update Entry" do
+    visit account_url(@entry.account)
+    click_on "Edit", match: :first
+    fill_in "Outflow", with: @entry.amount.abs
+    select categories(:transportation).name, from: "entry[category_id]"
+    fill_in "entry_check_number", with: @entry.check_number
+    fill_in "entry_entry_date", with: @entry.entry_date
+    fill_in "entry_payee", with: @entry.payee
+    click_on "Update Entry"
+
+    assert_text "Entry was successfully updated"
+    assert_equal account_url(@entry.account), current_url
+  end
+
+  test "should create entry" do
+    visit account_url(@account)
+    click_on "New", match: :first
+
+    payee = "ODD NAME Restaurant"
+    fill_in "Outflow", with: 83.11
+    select categories(:restaurants).name, from: "entry[category_id]"
+    fill_in "entry_entry_date", with: Date.today
+    fill_in "entry_payee", with: payee
+    click_on "Create Entry"
+
+    assert_text "Entry was successfully created"
+    assert_equal current_url, account_url(@account)
+    assert_text payee
+  end
+
+
+
+  test "Should create transfer entries" do
+    other_account = accounts(:discover)
+    init_account = accounts(:dcu_checking)
+    amount = 400
+    visit account_url(init_account)
+    click_on "New", match: :first
+    fill_in "entry_entry_date", with: Date.today + 1
+    select  other_account.name, from: "entry_transfer_account_id"
+    fill_in "entry_outflow", with: amount
+    click_on "Create Entry"
+    assert_text "Entry was successfully created", wait: 5
+  end
+  test "Should create transfer out entry with correct outflow" do
+    other_account = accounts(:discover)
+    init_account = accounts(:dcu_checking)
+    amount = 400
+    visit account_url(init_account)
+
+    click_on "New", match: :first
+    fill_in "entry_entry_date", with: Date.today + 1
+    select  other_account.name, from: "entry_transfer_account_id"
+    fill_in "entry_outflow", with: amount
+    click_on "Create Entry"
+
+    assert_text "Entry was successfully created", wait: 5
+    first_entry = all(".table-row-group>.table-row").first
+    outflow = first_entry.all(".table-cell")[OUTFLOW_COL].text
+    assert_equal ActionController::Base.helpers.number_to_currency(amount), outflow
+
+  end
+  test "Should create transfer out entry with correct inflow in other account" do
+    other_account = accounts(:discover)
+    init_account = accounts(:dcu_checking)
+    amount = 400
+    visit account_url(init_account)
+
+    click_on "New", match: :first
+    fill_in "entry_entry_date", with: Date.today + 1
+    select  other_account.name, from: "entry_transfer_account_id"
+    fill_in "entry_outflow", with: amount
+    click_on "Create Entry"
+
+    assert_text "Entry was successfully created", wait: 5
+
+    visit account_url(other_account)
+    first_entry = all(".table-row-group>.table-row").first
+    inflow = first_entry.all(".table-cell")[INFLOW_COL].text
+    assert_equal ActionController::Base.helpers.number_to_currency(amount), inflow
+  end
+
+  test "Should create transfer in entry with correct inflow" do
+    other_account = accounts(:discover)
+    init_account = accounts(:dcu_checking)
+    amount = 400
+    visit account_url(init_account)
+
+    click_on "New", match: :first
+    fill_in "entry_entry_date", with: Date.today + 1
+    select  other_account.name, from: "entry_transfer_account_id"
+    fill_in "entry_outflow", with: amount
+
+    click_on "Create Entry"
+    assert_text "Entry was successfully created", wait: 5
+
+    visit account_url(other_account)
+
+    first_entry = all(".table-row-group>.table-row").first
+    inflow = first_entry.all(".table-cell")[INFLOW_COL].text
+    assert_equal ActionController::Base.helpers.number_to_currency(amount), inflow
+  end
+  test "Should create transfer in entry with correct outflow in other account" do
+    other_account = accounts(:discover)
+    init_account = accounts(:dcu_checking)
+    amount = 412.22
+    visit account_url(init_account)
+
+    click_on "New", match: :first
+    fill_in "entry_entry_date", with: Date.today + 1
+    fill_in "entry_inflow", with: amount
+    select  other_account.name, from: "entry_transfer_account_id"
+    click_on "Create Entry"
+
+    assert_text "Entry was successfully created", wait: 5
+    visit account_url(other_account)
+    first_entry = all(".table-row-group>.table-row").first
+    outflow = first_entry.all(".table-cell")[OUTFLOW_COL].text
+    assert_equal ActionController::Base.helpers.number_to_currency(amount), outflow
+  end
+  test "should destroy Entry" do
+    skip "for now"
+
+  end
+
+  # End of moved tests
 
   test "visiting the index" do
     visit accounts_url
@@ -422,6 +553,15 @@ class AccountsTest < ApplicationSystemTestCase
     assert_equal filter_date_after.to_s, find("#date_after").value
     assert_equal filter_date_before.to_s, find("#date_before").value
     assert_text payee
+  end
+  test "Edit Entry should show category even if it is inactive" do
+    visit account_url(@account)
+    # Set all categories inactive so we can test create
+    # will still show categry even if it is inactive
+    Category.all.each {|x| x.active = false; x.save}
+    click_on "Edit", match: :first
+    assert_text "Select Category", count: 0
+
   end
   test "Edit entry should return to show page with filters" do
     filter_date_after = Date.today - 300

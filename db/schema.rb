@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_06_08_122156) do
+ActiveRecord::Schema[7.0].define(version: 2022_06_13_130928) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_stat_statements"
@@ -32,6 +32,20 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_08_122156) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "active"
+  end
+
+  create_table "dcu_entries", force: :cascade do |t|
+    t.date "entry_date"
+    t.text "account_name"
+    t.text "type"
+    t.integer "check_number"
+    t.text "description"
+    t.decimal "amount", precision: 13, scale: 4
+    t.decimal "balance", precision: 13, scale: 4
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_name"], name: "index_dcu_entries_on_account_name"
+    t.index ["entry_date"], name: "index_dcu_entries_on_entry_date"
   end
 
   create_table "disentries", force: :cascade do |t|

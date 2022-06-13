@@ -41,10 +41,17 @@
         class: "basic-field" %>
   </div>
    <div class="my-5">
+     <% if current_page?(action: :new)%>
+     <%= form.collection_select :category_id, Category.where(active:true).order(:name),:id, :name ,
+              {include_blank: "Select Category"},
+              {data: {action: "entry#on_set_category"}, class: "basic-field"}
+               %>
+     <% else %>
      <%= form.collection_select :category_id, Category.order(:name),:id, :name ,
               {include_blank: "Select Category"},
               {data: {action: "entry#on_set_category"}, class: "basic-field"}
                %>
+      <% end %>
    </div>
  <div class="my-5">
    <%= form.collection_select :transfer_account_id,

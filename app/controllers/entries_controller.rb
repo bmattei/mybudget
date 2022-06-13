@@ -34,7 +34,6 @@ class EntriesController < ApplicationController
   def index
 
     @entries = Entry.filter_by(filtering_params).left_outer_joins(:category).joins(:account).order(entry_date: :asc).order("#{params[:column]} #{params[:direction]}")
-    # @entries = Entry.filter_by(filtering_params).joins(:account).left_outer_joins(:category).order("accounts.name asc").order(entry_date: :asc).order("#{params[:column]} #{params[:direction]}")
 
   end
 
@@ -89,6 +88,7 @@ class EntriesController < ApplicationController
 
   # POST /entries or /entries.json
   def create
+    session[:entry_date] = entry_params[:entry_date]
     @entry = Entry.new(entry_params)
     redirect_url = params[:entry][:referrer] || account_url(@entry.account)
 
