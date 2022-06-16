@@ -44,3 +44,9 @@ filter_me:
   number: 09090889898989898989898989898
   bank: WeirdBank
   has_checking: true
+
+lots:
+  name: "Lots"
+  number: Abcd123456
+  bank: BigBank
+  has_checking: false

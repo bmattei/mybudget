@@ -8,7 +8,7 @@ class Entry < ApplicationRecord
   filter_scope :date_after, :date, -> (date) {where("entry_date >= ?", date)}
   filter_scope :check_after, :number, -> (num) {where("check_number >= ?", num)}
   filter_scope :check_before, :number, -> (num) {where("check_number <= ?", num)}
-
+  scope        :normal_order, -> {order(entry_date: :desc).order(id: :desc)}
 
   belongs_to :account
   belongs_to :category, required: false

@@ -1,4 +1,5 @@
 class CategoriesController < ApplicationController
+  include Pagy::Backend
   before_action :set_category, only: %i[ show edit update destroy ]
   helper_method :display_columns, :allow_edit, :allow_delete, :allow_show
   def display_columns
@@ -19,7 +20,8 @@ class CategoriesController < ApplicationController
 
 
   def index
-    @categories = Category.order(active: :desc).order(:name).left_outer_joins(:category).filter_by(filtering_params).order("#{params[:column]} #{params[:direction]}")
+    @pagy, @categories = pagy(Category.order(active: :desc).order(:name).left_outer_joins(:category).filter_by(filtering_params).order("#{params[:column]} #{params[:direction]}"),
+                       items: 10)
     @allow_delete = false
     @allow_edit = false
     # return @categories

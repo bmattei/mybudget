@@ -7,13 +7,27 @@
   <div class="flex justify-between items-center">
     <h1 class="font-bold text-4xl">Accounts</h1>
   </div>
-
-  <div id="accounts" class="min-w-full">
-    <%= render :partial => '/shared/table', :locals => {records: @accounts, columns: ["bank", "name", "number", "has_checking"]} %>
-  </div>
   <div class='my-4'>
     <%= link_to 'New account', new_account_path, class: "btn-primary" %>
+  </div>
+  <div id="accounts" class="min-w-full">
+    <%= render :partial => '/shared/table', :locals => {records: @accounts, columns: ["bank", "name", "number", "has_checking"]} %>
+
+    <div id="pager" class="min-w-full my-8 flex justify-between">
+
+        <div>
+          <% if @pagy.prev %>
+            <%= link_to "< Previous page", url_for(params.merge(page: @pagy.prev)), class: "btn-primary" %>
+          <% end %>
+        </div>
+        <div class="text-right">
+          <% if @pagy.next %>
+            <%= link_to "Next page >", url_for(params.merge(page: @pagy.next)), class: "btn-primary" %>
+          <% end %>
+        </div>
+      </div>
 
   </div>
+
 
 </div>

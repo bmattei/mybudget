@@ -1,4 +1,5 @@
 module ApplicationHelper
+  include Pagy::Frontend
   def sort_link(label, column)
     #path_helper = params[:controller] + '_path'
     #path_helper = url_for

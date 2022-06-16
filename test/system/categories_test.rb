@@ -13,8 +13,9 @@ class CategoriesTest < ApplicationSystemTestCase
   test "should create category" do
     visit categories_url
     click_on "New category"
-    name = "tolls"
+    name = "AAA"
     fill_in "Name", with: name
+    find(:css, "#category_active").set(true)
     select categories(:transportation).name, from: "category[category_id]"
     click_on "Create Category"
 

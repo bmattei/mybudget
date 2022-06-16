@@ -10,8 +10,6 @@ class AccountsTest < ApplicationSystemTestCase
   OUTFLOW_COL = 7
   BALANCE_COL = 8
 
-
-
   setup do
     @account = accounts(:dcu_checking)
     @entry = entries(:discover_init)
@@ -395,7 +393,7 @@ class AccountsTest < ApplicationSystemTestCase
     visit account_url(account)
     rows = find_all(".table-row-group .table-row")
     i = 0
-    account.entries.order(entry_date: :desc).each do |e|
+    account.entries.normal_order.limit(10).each do |e|
       columns = rows[i].find_all('.table-cell')
       assert_equal e.category.name, columns[CATEGORY_COL].text if e.category.name
       assert_equal e.entry_date.to_s, columns[DATE_COL].text
@@ -494,11 +492,104 @@ class AccountsTest < ApplicationSystemTestCase
       assert_text e.memo  if e.memo
     end
   end
+
+  # Pagination  TESTS
+  test "A Max of ten account entries should be displayed" do
+    account = accounts(:lots)
+    visit account_url(account)
+    expected = account.entries.normal_order.limit(10)
+    assert_equal expected.count, find_all(".table-row-group .table-row").count
+  end
+
+  test "There should be a next button if there are more then 10 entries" do
+    account = accounts(:lots)
+    visit account_url(account)
+    assert_text "Next"
+  end
+
+  test "next should take you to next entries" do
+    account = accounts(:lots)
+    visit account_url(account)
+    expected = account.entries.normal_order.limit(10).offset(10)
+    click_on "Next"
+    assert_text "Previous"
+    expected.each do |e|
+      assert_text e.entry_date.to_s
+      assert_text e.amount.abs.to_f.round(2).to_s
+      assert_text e.payee if e.payee
+      assert_text e.memo  if e.memo
+    end
+
+  end
+  test "You should be able to work through all entries with next" do
+    account = accounts(:lots)
+    visit account_url(account)
+    entries = account.entries.normal_order
+    next_count = (entries.count / 10) - 1
+    (1..next_count).each do |i|
+      click_on "Next"
+      assert_text "Previous"
+      expected = entries.offset(10 * i).limit(10)
+      expected.each do |e|
+        assert_text e.entry_date.to_s
+        assert_text e.amount.abs.to_f.round(2).to_s
+        assert_text e.payee if e.payee
+        assert_text e.memo  if e.memo
+      end
+    end
+  end
+  test "Next should work with filters" do
+    account = accounts(:lots)
+    visit account_url(account)
+    assert_text "Payee"
+    fill_in "payee_contains", with: "Linguine"
+    click_on "Filter"
+    assert_text "Linguine", count:10
+    entries = account.entries.normal_order.payee_contains("Linguine")
+    next_count = (entries.count / 10) - 1
+    (1..next_count).each do |i|
+      click_on "Next"
+      assert_text "Previous"
+      expected = entries.offset(10 * i).limit(10)
+      expected.each do |e|
+        assert_text e.entry_date.to_s
+        assert_text e.amount.abs.to_f.round(2).to_s
+        assert_text e.payee if e.payee
+        assert_text e.memo  if e.memo
+      end
+    end
+  end
+  test "You should be able to work through all entries with previous" do
+    account = accounts(:lots)
+    visit account_url(account)
+    entries = account.entries.normal_order
+    next_count = (entries.count / 10)
+    (1..next_count).each do |i|
+      click_on "Next page"
+      assert_text "Previous page"
+    end
+    next_count.downto(1).each do |i|
+      expected = entries.offset(10 * i).limit(10)
+      expected.each do |e|
+        assert_text e.entry_date.to_s
+        assert_text e.amount.abs.to_f.round(2).to_s
+        assert_text e.payee if e.payee
+        assert_text e.memo  if e.memo
+      end
+      click_on "Previous page"
+      assert_text "Next page"
+    end
+    assert_text "Previous", count: 0
+  end
+
+# END Pagination tests
+  #  TODO: This test is too dependent on exact fixture data.
+  # should be fixed
   test "Should be able to filter between dates" do
        account = accounts(:discover)
        visit account_url(account)
 
-       max_date =  Entry.group(:account_id).maximum("entry_date")[account.id]
+       max_date =  Date.today - 1
        min_date =  Entry.group(:account_id).minimum("entry_date")[account.id]
 
        find("#date_after").fill_in(with: min_date + 1)
@@ -559,8 +650,10 @@ class AccountsTest < ApplicationSystemTestCase
     # Set all categories inactive so we can test create
     # will still show categry even if it is inactive
     Category.all.each {|x| x.active = false; x.save}
+    first_category = all(".table-row-group>.table-row").first.text.split.first
     click_on "Edit", match: :first
-    assert_text "Select Category", count: 0
+    assert_text "Cancel"
+    assert_text first_category
 
   end
   test "Edit entry should return to show page with filters" do

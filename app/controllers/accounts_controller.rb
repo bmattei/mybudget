@@ -1,25 +1,25 @@
 class AccountsController < ApplicationController
+  include Pagy::Backend
   before_action :set_account, only: %i[ show edit update destroy ]
   helper_method :display_columns, :allow_edit, :allow_show, :allow_delete
 
 
   # GET /accounts or /accounts.json
   def index
-       @accounts = Account.filter_by(filtering_params).order("#{params[:column]} #{params[:direction]}")
+    @pagy ,@accounts = pagy(Account.filter_by(filtering_params).order("#{params[:column]} #{params[:direction]}"),
+                        items: 10)
   end
 
   # GET /accounts/1 or /accounts/1.json
   def show
 
     @account = Account.find(params[:id])
-    filters = params.slice(*Entry.filter_scopes)
-    params[:date_after] = Date.today - 1.year if filters.keys.count == 0
     @filters = params.slice(*Entry.filter_scopes)
     @filters.permit!
-    @entries = @account.entries.filter_by(params.slice(*Entry.filter_scopes)).
+    @pagy, @entries = pagy(@account.entries.filter_by(params.slice(*Entry.filter_scopes)).
     left_outer_joins(:category).
     order("#{params[:column]} #{params[:direction]}").
-    order(entry_date: :desc).order(id: :desc)
+    normal_order, items: 10)
     @sum = @entries.sum(:amount)
   end
 

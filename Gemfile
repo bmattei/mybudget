@@ -80,3 +80,5 @@ gem "pghero"
 
 gem "pg_query", ">= 0.9.0"
 gem "pdf-reader"
+
+gem 'pagy', '~> 5.10'
