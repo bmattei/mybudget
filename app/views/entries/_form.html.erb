@@ -29,7 +29,7 @@
     <%= form.date_field :entry_date, class: "basic-field" %>
   </div>
 
-  <% if entry.account.has_checking %>
+  <% if entry.account && entry.account.has_checking %>
   <div class="my-5">
     <%= form.number_field :check_number, placeholder: "Check Number", class: "basic-field px-3" %>
   </div>
@@ -38,6 +38,10 @@
   <div class="my-5">
     <%= form.text_field :payee, placeholder: "Payee",
         data: {action: "entry#on_set_payee"},
+        class: "basic-field" %>
+  </div>
+  <div class="my-5">
+    <%= form.text_field :memo, placeholder: "Memo",
         class: "basic-field" %>
   </div>
    <div class="my-5">

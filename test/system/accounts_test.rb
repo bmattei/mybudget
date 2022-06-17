@@ -1,6 +1,7 @@
 require "application_system_test_case"
 
 class AccountsTest < ApplicationSystemTestCase
+  include ApplicationHelper
   CATEGORY_COL = 1
   DATE_COL = 2
   CHECK_COL = 3
@@ -45,7 +46,23 @@ class AccountsTest < ApplicationSystemTestCase
     assert_equal current_url, account_url(@account)
     assert_text payee
   end
+  test "New Should remember the last date entered " do
+    visit account_url(@account)
+    click_on "New", match: :first
 
+    payee = "ODD NAME Restaurant"
+    fill_in "Outflow", with: 99.97
+    select categories(:restaurants).name, from: "entry[category_id]"
+    date = Date.today - 100
+    fill_in "entry_entry_date", with: date
+    fill_in "entry_payee", with: payee
+    click_on "Create Entry"
+    assert_text "Entry was successfully created"
+
+    click_on "New"
+    form_date = find("#entry_entry_date").value
+    assert_equal date.to_s, form_date
+    end
 
 
   test "Should create transfer entries" do
@@ -396,7 +413,7 @@ class AccountsTest < ApplicationSystemTestCase
     account.entries.normal_order.limit(10).each do |e|
       columns = rows[i].find_all('.table-cell')
       assert_equal e.category.name, columns[CATEGORY_COL].text if e.category.name
-      assert_equal e.entry_date.to_s, columns[DATE_COL].text
+      assert_equal as(e.entry_date, :date), columns[DATE_COL].text
       assert_equal e.check_number.to_s, columns[CHECK_COL].text if e.check_number
       assert_equal e.payee, columns[PAYEE_COL].text if e.payee
       assert_equal e.memo, columns[MEMO_COL].text if e.memo
@@ -415,7 +432,7 @@ class AccountsTest < ApplicationSystemTestCase
      sleep 2
      assert_equal expected.count, find_all(".table-row-group .table-row").count
      expected.each do |e|
-       assert_text e.entry_date.to_s
+       assert_text as(e.entry_date, :date)
        assert_text e.payee if e.payee
        assert_text e.memo  if e.memo
      end
@@ -432,7 +449,7 @@ class AccountsTest < ApplicationSystemTestCase
 
      assert_equal expected.count, find_all(".table-row-group .table-row").count
      expected.each do |e|
-       assert_text e.entry_date.to_s
+       assert_text as(e.entry_date, :date)
        assert_text e.payee if e.payee
        assert_text e.memo if e.memo
      end
@@ -447,7 +464,7 @@ class AccountsTest < ApplicationSystemTestCase
     sleep 2
     assert_equal expected.count, find_all(".table-row-group .table-row").count
     expected.each do |e|
-      assert_text e.entry_date.to_s
+      assert_text as(e.entry_date, :date)
       assert_text e.payee
       assert_text e.memo  if e.memo
     end
@@ -486,7 +503,7 @@ class AccountsTest < ApplicationSystemTestCase
     sleep 2
     assert_equal expected.count, find_all(".table-row-group .table-row").count
     expected.each do |e|
-      assert_text e.entry_date.to_s
+      assert_text as(e.entry_date, :date)
       assert_test e.check_number.to_s
       assert_text e.payee if e.payee
       assert_text e.memo  if e.memo
@@ -514,7 +531,7 @@ class AccountsTest < ApplicationSystemTestCase
     click_on "Next"
     assert_text "Previous"
     expected.each do |e|
-      assert_text e.entry_date.to_s
+      assert_text as(e.entry_date, :date)
       assert_text e.amount.abs.to_f.round(2).to_s
       assert_text e.payee if e.payee
       assert_text e.memo  if e.memo
@@ -531,7 +548,7 @@ class AccountsTest < ApplicationSystemTestCase
       assert_text "Previous"
       expected = entries.offset(10 * i).limit(10)
       expected.each do |e|
-        assert_text e.entry_date.to_s
+        assert_text as(e.entry_date, :date)
         assert_text e.amount.abs.to_f.round(2).to_s
         assert_text e.payee if e.payee
         assert_text e.memo  if e.memo
@@ -552,7 +569,7 @@ class AccountsTest < ApplicationSystemTestCase
       assert_text "Previous"
       expected = entries.offset(10 * i).limit(10)
       expected.each do |e|
-        assert_text e.entry_date.to_s
+        assert_text as(e.entry_date, :date)
         assert_text e.amount.abs.to_f.round(2).to_s
         assert_text e.payee if e.payee
         assert_text e.memo  if e.memo
@@ -571,7 +588,7 @@ class AccountsTest < ApplicationSystemTestCase
     next_count.downto(1).each do |i|
       expected = entries.offset(10 * i).limit(10)
       expected.each do |e|
-        assert_text e.entry_date.to_s
+        assert_text as(e.entry_date, :date)
         assert_text e.amount.abs.to_f.round(2).to_s
         assert_text e.payee if e.payee
         assert_text e.memo  if e.memo
@@ -603,7 +620,7 @@ class AccountsTest < ApplicationSystemTestCase
        sleep 2
        assert_equal expected.count, find_all(".table-row-group .table-row").count
        expected.each do |e|
-         assert_text e.entry_date.to_s
+         assert_text as(e.entry_date, :date)
          assert_text e.payee if e.payee
          assert_text e.memo  if e.memo
        end
@@ -671,5 +688,7 @@ class AccountsTest < ApplicationSystemTestCase
     assert_equal filter_date_before.to_s, find("#date_before").value
     assert_text payee
   end
+
+
 
 end

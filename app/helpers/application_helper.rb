@@ -22,9 +22,15 @@ module ApplicationHelper
     tag.div(class: "sort sort-#{params[:direction]}")
   end
 
+
   def as(data, to)
-    convert_map = {money: number_to_currency(data),
-                   nil => data }
-    convert_map[to]
+    case to
+    when :money
+      number_to_currency(data)
+    when :date
+      "#{data.year}/#{data.month}/#{data.day}"
+    else
+      data
+    end
   end
 end

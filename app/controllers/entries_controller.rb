@@ -1,15 +1,19 @@
 class EntriesController < ApplicationController
+  include Pagy::Backend
+
   before_action :set_entry, only: %i[ show edit update destroy ]
   helper_method :display_columns, :allow_edit, :allow_delete, :allow_show
 
   # before_action :set_account, only: %i[ show edit update destroy ]
 
-  def display_columns(for_show = true)
+  def display_columns(for_account = false)
+        # as is used to manipulate how data is displayed the method is defined in
+        # application_helper and used bfoy the views
         all_columns =  [
                  {model_method: "account_name", column: "accounts.name", label: "Account"},
                  {model_method: "cleared", colomn: "account.cleared", label:"Cleared"},
                  {model_method: "category_name", column: "categories.name", label: "Category"},
-                 {model_method: "entry_date", column: "entries.entry_date", label: "Entrydate" },
+                 {model_method: "entry_date", column: "entries.entry_date", label: "Entrydate", as: :date},
                  {model_method: "check_number", column: "entries.check_number", label: 'check#' },
                  {model_method: "payee", column: "entries.payee", label: "payee" },
                  {model_method: "memo", column: "entries.memo", label: "memo" },
@@ -17,7 +21,7 @@ class EntriesController < ApplicationController
                  {model_method: "outflow", column: "entries.amount", label: "outflow", as: :money},
                  {model_method: "balance", column: "entries.balance", label: "Balance", as: :money}
                 ]
-        return for_show ? all_columns.slice(1..) : all_columns
+        return for_account ? all_columns.slice(1..) : all_columns
   end
   def allow_edit
       true
@@ -33,7 +37,10 @@ class EntriesController < ApplicationController
   # GET /entries or /entries.json
   def index
 
-    @entries = Entry.filter_by(filtering_params).left_outer_joins(:category).joins(:account).order(entry_date: :asc).order("#{params[:column]} #{params[:direction]}")
+    @pagy, @entries = pagy(Entry.filter_by(params.slice(*Entry.filter_scopes)).
+    left_outer_joins(:category).
+    order("#{params[:column]} #{params[:direction]}").
+    normal_order, items: 10)
 
   end
 
@@ -78,8 +85,7 @@ class EntriesController < ApplicationController
     @referrer = request.referrer
     @entry = Entry.new
     @entry.account_id = params[:account_id]
-    @entry.entry_date = Date.today
-
+    @entry.entry_date = session[:last_date] ?  session[:last_date].to_date : Date.today
   end
 
   # GET /entries/1/edit
@@ -88,7 +94,7 @@ class EntriesController < ApplicationController
 
   # POST /entries or /entries.json
   def create
-    session[:entry_date] = entry_params[:entry_date]
+    session[:last_date] = entry_params[:entry_date]
     @entry = Entry.new(entry_params)
     redirect_url = params[:entry][:referrer] || account_url(@entry.account)
 
@@ -105,7 +111,9 @@ class EntriesController < ApplicationController
 
   # PATCH/PUT /entries/1 or /entries/1.json
   def update
+
     redirect_url = params[:entry][:referrer] || account_url(@entry.account)
+    puts "\n\n************* REDIRECT EDIT BUG #{redirect_url}\n\n"
     respond_to do |format|
       if @entry.update(entry_params)
         format.html { redirect_to redirect_url, notice: "Entry was successfully updated." }
