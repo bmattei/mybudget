@@ -25,6 +25,12 @@
       <%= form.text_field :payee_contains, value: params[:payee_contains] %>
     </div>
     <div>
+      <%= form.label :query, "Memo" %>
+    </div>
+    <div>
+      <%= form.text_field :memo_contains, value: params[:memo_contains] %>
+    </div>
+    <div>
       <%= form.label :query, "Check Range" %>
     </div>
     <div>

@@ -2,6 +2,8 @@ class Entry < ApplicationRecord
   include Filterable
   filter_scope :category_is, Category.all, -> (category_id) {where(category_id: category_id)}
   filter_scope :payee_contains, :text, ->(str) {where("payee like ?", "%#{str}%")}
+  filter_scope :memo_contains, :text, ->(str) {where("memo like ?", "%#{str}%")}
+
   filter_scope :amount_greater_than, :money, ->(amount) {where("amount >= ?", amount.to_f)}
   filter_scope :amount_less_than, :money, ->(amount) {where("amount <= ?", amount.to_f)}
   filter_scope :date_before, :date, -> (date) {where("entry_date <= ?", date)}
@@ -29,7 +31,7 @@ class Entry < ApplicationRecord
   belongs_to :account
   after_update :clear_balances
   after_save :manage_transfers
-  before_destroy :delete_other_transfer_entry
+  before_destroy :delete_other_transfer_entry, :clear_balances
 
 
 

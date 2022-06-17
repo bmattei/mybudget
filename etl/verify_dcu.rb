@@ -1,6 +1,10 @@
 $LOAD_PATH << '.'
 $LOAD_PATH << './etl'
 require 'config/environment'
+#
+#  Used to verify the data imported from YNAB into dcu checking.
+#  Not sure it has anything useful going forward
+#
 
 class VerifyDcu
 

@@ -1,6 +1,11 @@
   $LOAD_PATH << '.'
   $LOAD_PATH << './etl'
   require 'config/environment'
+#
+#  Used this to import dump of YNAB data into a CSV file.  It loads the data into
+#  ynab_entries table in database.  It loads the data almost as is  except outflows
+#  and inflows are put into amount with outflows put in as negative values.
+#
 class ImportYnab
   Account_Name = 0
   Flag = 1

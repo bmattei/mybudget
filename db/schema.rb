@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_06_13_130928) do
+ActiveRecord::Schema[7.0].define(version: 2022_06_16_150704) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_stat_statements"
@@ -44,6 +44,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_13_130928) do
     t.decimal "balance", precision: 13, scale: 4
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "file"
     t.index ["account_name"], name: "index_dcu_entries_on_account_name"
     t.index ["entry_date"], name: "index_dcu_entries_on_entry_date"
   end

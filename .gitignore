@@ -50,4 +50,6 @@
 
 *.pdf
 
+*.sql
+
 etl/temp

@@ -1,11 +1,23 @@
 $LOAD_PATH << '.'
 $LOAD_PATH << './etl'
 require 'config/environment'
-# Read DCU file and Load into DCUEntry model
+# Read DCU file and Load into DCUEntry model (dcu_entries table)
+# ReadDcuPdf reads the PDF and put the DcuChecking entries into
+# a array of hashes.  NOTE IT DOES NOTHING WITH OTHER DCU ACCOUNTS.
+#
+# LoadDcuEntry takes the array of hashes and writes it into
+# dcu_entries.
+#
+#  I like this two step approach because it is easier to figure out
+#  the any issues if I have the data in (mostly) unaltered form in
+#  the database.  Most of the problems occur during the translation
+#  phase.
+#
 class ReadDcuPdf
     def initialize(path)
       if File.file?(path) && path.end_with?(".pdf")
         @path = path
+        @file_name = File.basename(path)
       else
         raise ArgumentError.new("File #{path} not found")
       end
@@ -57,7 +69,8 @@ class ReadDcuPdf
               entries << {entry_date: @start_date,
                           previous_balance: true,
                           description: "PREVIOUS BALANCE",
-                          balance: str_to_amount(match[1])}
+                          balance: str_to_amount(match[1])
+                        }
                state = :read_table
             end
           when :read_table
@@ -79,13 +92,12 @@ class ReadDcuPdf
 
           end
         end
-        # pp entries
+        entries.each {|e| e[:file] = @file_name }
         return entries
     end
 end
 
 class LoadDcuEntry
-
 
   def write_dcu_entries(records, account_name)
     records.each do |rec|
@@ -94,7 +106,8 @@ class LoadDcuEntry
         entry_date: rec[:entry_date],
         amount: rec[:amount],
         balance: rec[:balance],
-        description:  rec[:description] )
+        description:  rec[:description],
+        file: rec[:file] )
     end
   end
 end
@@ -119,6 +132,10 @@ if __FILE__ == $0
     rdr = ReadDcuPdf.new(ARGV[0])
     entries = rdr.read_checking_entries
     pp entries
+    if ARGV.include?("load")
+      wrtr = LoadDcuEntry.new
+      wrtr.write_dcu_entries(entries, "DCU CHECKING")
+    end
   end
 
 end

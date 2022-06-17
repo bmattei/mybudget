@@ -4,6 +4,11 @@ require 'config/environment'
 load 'etl/load_discover_pdf.rb'
 load 'etl/load_new_discover_pdf.rb'
 load 'etl/load_discover_csv.rb'
+#
+#   I imported data from YNAB but it was not quite correct. I wrote some quick
+#   code to help me fix it.  In it's current state I'm not sure tis file will
+#   contains anything useful going forward.
+#
 class FixDcu
   def initialize
     @discover = Account.where(name: 'Discover Card').first || raise('Bad Account')

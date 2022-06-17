@@ -1,7 +1,11 @@
 $LOAD_PATH << '.'
 $LOAD_PATH << './etl'
 require 'config/environment'
-
+#
+#   This file download statements from DCU. Like most scrapers it fragile.
+#   Right now it down loads multiple files.  TO make it useful going forward
+#   I probably want to select the files by date.
+#
 class DcuScraper
    def initialize(name, password)
      @name = name
