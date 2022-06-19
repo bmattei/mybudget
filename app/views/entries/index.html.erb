@@ -7,8 +7,14 @@
     <h1 class="font-bold text-4xl">Entries</h1>
   </div>
   <div id="accounts" class="min-w-full">
-    <%= render :partial => 'shared/table', :locals => {records: @entries, allow_delete: @allow_delete, allow_edit: @allow_edit} %>
+    <%= render :partial => 'entries/table', :locals => {records: @entries, allow_delete: @allow_delete, allow_edit: @allow_edit} %>
   </div>
+  <% content_for :right do %>
+
+    <div>
+       <%= render :partial => '/entries/filters', :locals => {url: entries_path } %>
+    </div>
+  <% end %>
   <div id="pager" class="min-w-full my-8 flex justify-between">
     <div>
       <% if @pagy.prev %>

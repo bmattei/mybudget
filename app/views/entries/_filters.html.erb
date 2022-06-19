@@ -12,6 +12,13 @@
       <%= form.date_field :date_before, value: params[:date_before] %>
     </div>
     <div>
+      <%= form.label :query, "Category" %>
+    </div>
+    <div>
+      <%= form.collection_select :category_is, Category.order(:name), :id, :name, { include_blank: 'Category_Filter',
+      selected: params[:category_is] } %>
+    </div>
+    <div>
       <%= form.label :query, "Amount Range:" %>
     </div>
     <div>
@@ -37,12 +44,7 @@
       <%= form.number_field :check_after, in: 1..90000 , step: 1, value: params[:check_after] %>
       <%= form.number_field :check_before, in: 1..90000 , step: 1, value: params[:check_before] %>
     </div>
-    <div>
-      <%= form.label :query, "Category" %>
-    </div>
-    <div>
-      <%= form.collection_select :category_is, Category.order(:name), :id, :name, { include_blank: 'Category_Filter' }, value: Category.where(id:params[:category_is]).first %>
-    </div>
+
     <div>
       <%= form.submit "Filter" , class: 'btn-small'%>
       <%= link_to "Clear", url, class: "btn-small flex-nowrap" %>
