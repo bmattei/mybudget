@@ -13,6 +13,7 @@ class AccountsTest < ApplicationSystemTestCase
 
   setup do
     @account = accounts(:dcu_checking)
+    @discover = accounts(:discover)
     @entry = entries(:discover_init)
   end
 
@@ -45,6 +46,26 @@ class AccountsTest < ApplicationSystemTestCase
     assert_text "Entry was successfully created"
     assert_equal current_url, account_url(@account)
     assert_text payee
+  end
+  #  Added this test because creating entries was working on the first account
+  #  in fixtures - only and I was not catching it.  This test verifies it works on other accounts
+  test "should create discover entry" do
+    initial_num_entries = @discover.entries.count
+    visit account_url(@discover)
+    click_on "New", match: :first
+
+    payee = "ODD NAME Discover Restaurant"
+    assert_text "Outflow"
+    fill_in "Outflow", with: 129.90
+    select categories(:restaurants).name, from: "entry[category_id]"
+    fill_in "entry_entry_date", with: Date.today
+    fill_in "entry_payee", with: payee
+    click_on "Create Entry"
+
+    assert_text "Entry was successfully created"
+    assert_equal current_url, account_url(@discover)
+    assert_text payee
+    assert_equal initial_num_entries + 1, @discover.entries.count
   end
   test "New Should remember the last date entered " do
     visit account_url(@account)
