@@ -16,6 +16,12 @@
     <%= form.text_field :name, class: "basic-field" %>
   </div>
   <div class="my-5">
+    <% if @category.categories.count == 0 %>
+    <%= form.label :category%>
+    <%= form.collection_select :category_id, Category.order(:name).where(category_id: nil).where.not(id: @category.id),:id, :name ,{include_blank: "Select Category"} %>
+    <% end %>
+  </div>
+  <div class="my-5">
     <%= form.label :active %>
     <%= form.check_box :active, class: "" %>
   </div>
@@ -23,22 +29,15 @@
   <div class="my-5">
 
 
-    <% if category.id.nil? %>
-      <%= form.label :category %>
-      <%= form.collection_select :category_id, Category.order(:name).where(category_id: nil), :id, :name, include_blank: true, class: "basic-field"%>
-    <% elsif !category.category.nil? %>
-      <%= form.label :category %>
-      <%= form.collection_select :category_id, Category.order(:name).where(category_id: nil).where.not(id: category.id), :id, :name,
-    class:  "basic-field"%>
-    <% end %>
-  </div>
 
+
+  <%= form.hidden_field :referrer, value: request.referrer %>
 
   <div class="inline">
     <%= form.submit class: "btn-small" %>
   </div>
   <div class="inline">
-    <%= link_to "Cancel", categories_url, data: { turbo_frame: "_top"}, class: "btn-small" %>
+    <%= link_to "Cancel", request.referrer, data: { turbo_frame: "_top"}, class: "btn-small" %>
   </div>
 
 <% end %>

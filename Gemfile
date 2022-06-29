@@ -75,6 +75,7 @@ group :test, :development do
 end
 
 gem "chartkick"
+gem "groupdate"
 gem "csv"
 gem "pghero"
 

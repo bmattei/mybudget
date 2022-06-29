@@ -8,7 +8,11 @@
     <%= form.label :query, "Date Range:" %>
   </div>
   <%= form.date_field :start, value: params[:start] %>
-  <%= form.date_field :end, value: params[:end] %>å
+  <%= form.date_field :end, value: params[:end] %>
+  <div>
+    <%= form.collection_select :category_id, @categories, :id, :name, { include_blank: 'Category_Filter',
+    selected: params[:category_id] } %>
+  </div>
   <div>
     <%= form.label :query, "Chart Type" %>
   </div>

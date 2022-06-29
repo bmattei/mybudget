@@ -1,9 +1,65 @@
 <div >
 
   <h1 class="font-bold text-4xl">Reports</h1>
+  <% if @report_data.values[0].is_a?(Hash) %>
+  <% @report_data.each do |label, data| %>
+    <h2 class="font-bold"> <%= label %> </h2>
+    <%= render partial: "chart", locals:{type: @type, data: data.sort.to_h}  %>
+    </br>
+  <% end %>
 
-  <%= render partial: "chart", locals:{type: @type, data: @report_data}  %>
-  <%#= render :partial => '/shared/table', :locals => {records: @accounts, columns: ["bank", "name", "number", "has_checking"]} %>
+
+  <table class="table-auto">
+  <thead>
+      <tr>
+        <th> Period </th>
+        <% @categories.each do |cat| %>
+        <th class="odd:bg-blue-200 even:bg-blue-400 px-4"> <%= cat.name %></th>
+        <% end %>
+        <th> Total </th>
+
+      </tr>
+  </thead>
+  <tbody>
+    <% @report_data.each do |period, data| %>
+      <tr>
+        <td class="odd:bg-blue-200 even:bg-blue-400 px-4 text-sm text-right"> <%= period %> </td>
+        <% @categories.each do |cat| %>
+          <td class="odd:bg-blue-200 even:bg-blue-400 px-4 text-sm text-right">  <%= as(data[cat.name]  || 0 , :money) %> </td>
+        <% end %>
+        <td class = "odd:bg-blue-200 even:bg-blue-400 px-4 text-sm text-right"> <%= as(data.values.inject {|sum, x| sum + x }, :money) %> </td>
+
+      </tr>
+    <% end %>
+
+  </tbody>
+</table>
+
+  <% else %>
+    <%= render partial: "chart", locals:{type: @type, data: @report_data.sort.to_h}  %>
+    </br>
+    <table>
+      <thead>
+        <tr class="bg-blue-200 gap-4 text-sm">
+          <% @categories.each do |cat| %>
+          <th class="odd:bg-blue-200 even:bg-blue-400 px-4"> <%= cat.name %></th>
+          <% end %>
+          <th> TOTAL </th>
+        </tr>
+
+
+     </thead>
+     <tbody>
+       <tr>
+         <% @categories.each do |cat| %>
+           <td class="odd:bg-blue-200 even:bg-blue-400 px-4 text-sm">  <%= as(@report_data[cat.name] || 0, :money) %> </td>
+         <% end %>
+         <td "bg-blue-200 gap-4 text-sm> <%= as(@report_data.values.inject {|sum, x| sum + x }, :money) %> </td>
+       </tr>
+    </tbody>
+    </table>
+  <% end %>
+
 
   <% content_for :right do %>
     <div>

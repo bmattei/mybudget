@@ -12,7 +12,7 @@ class CategoryMap
           Category.find_or_create_by(name:sub_cat.to_s, category: communications)
     end
     education = Category.find_or_create_by(name: "EDUCATION", active: true)
-    [:college, :highschool, :misc].each do |sub_cat|
+    [:college, :highschool, :education_misc].each do |sub_cat|
           Category.find_or_create_by(name:sub_cat.to_s, category: education)
     end
     entertainment = Category.find_or_create_by(name: "ENTERTAINMENT", active: true)

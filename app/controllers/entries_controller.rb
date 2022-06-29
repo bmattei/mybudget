@@ -49,27 +49,45 @@ class EntriesController < ApplicationController
   end
   helper_method :allowed_types
   def allowed_intervals
-    ["", "year", "quarter", "month", "week", "day"]
+    ["", "year", "quarter", "month"]
   end
   helper_method :allowed_intervals
-  def reporting
 
+
+
+  def reporting
     @type = allowed_types.include?(params["type"]) ?  params["type"] : "column_chart"
     interval = allowed_intervals.include?(params["interval"]) ?  params["interval"] : ""
-    @report_data = Entry.joins(:category)
+    @report_data = Entry.joins(:category).joins(category: :category)
     if (params[:start] && params[:start].to_date.is_a?(Date))
       @report_data = @report_data.where("entry_date >= ?", params[:start])
     end
     if (params[:end] && params[:end].to_date.is_a?(Date))
       @report_data = @report_data.where("entry_date <= ?", params[:end])
     end
+    category_str = "categories_categories.name"
+
+    if params[:category_id] && params[:category_id].length > 0
+      @report_data = @report_data.where("categories.category_id = ?", params[:category_id])
+      category_str = "categories.name"
+    end
+
+   loan_id = Category.where(name: "LOANS").first
+   income_id = Category.where(name: "INCOME").first
+   @categories = Category.where(category_id: params[:category_id].to_i > 0 ? params[:category_id].to_i : nil).
+                    where.not(id: loan_id).where.not(id:income_id).order(name: :asc)
     if interval.length > 0
-      @report_data = @report_data.group("categories.name").group("date_trunc(\'#{interval}\', entry_date)").sum(:amount)
+      @report_data = @report_data.group("date_trunc(\'#{interval}\', entry_date)").group(category_str).sum(:amount)
       @report_data.delete_if {|k,v| v > 0}
       @report_data.each {|k,v| @report_data[k] = v.abs}
-      @report_data.each {|k,v| k[1] = k[1].to_date}
+      if interval.eql?("year")
+        @report_data.each {|k,v| k[0] = k[0].to_date.year}
+      else
+        @report_data.each {|k,v| k[0] = k[0].to_date} 
+      end
+      @report_data = multi_chart_data(@report_data).sort{|a,b| b <=> a }.to_h
     else
-      @report_data = @report_data.group("categories.name").sum(:amount)
+      @report_data = @report_data.group(category_str).sum(:amount)
       @report_data.delete_if {|k,v| v > 0}
       @report_data.each {|k,v| @report_data[k] = v.abs}
     end
@@ -137,6 +155,18 @@ class EntriesController < ApplicationController
 
   private
 
+    # This takes a hash where the keys arrays of two entries and breaks it into
+    # a hash of hashes so {[1,4] => a, [2,4] = b} becomes {1=> {4=>a}, 2=> {4=>b}}
+    # This allows us to create seperated charts for each date when using group_by date
+
+    def multi_chart_data(data)
+      return_hash = {}
+      data.each do |key, value|
+        return_hash[key[0]] ||= {}
+        return_hash[key[0]][key[1]] ||= value
+      end
+      return_hash
+    end
     def filtering_params
       params.slice(*Entry.filter_scopes)
     end
