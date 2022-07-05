@@ -1,0 +1,5 @@
+<%= turbo_frame_tag "new_category", class: "contents" do %>
+<%= turbo_stream.after "new_category" do %>
+    <%= render @category %>
+<% end %>
+<% end %>

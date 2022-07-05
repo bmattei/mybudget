@@ -1,22 +1,26 @@
-<div id="<%= dom_id category %>">
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Name:</strong>
+ <%= turbo_frame_tag dom_id(category), class: "table-row even:bg-blue-100" do %>
+  <div class="table-cell overflow-y-scroll px-2 py-1" >
     <%= category.name %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Category:</strong>
-    <%= category.category_id %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Level:</strong>
-    <%= category.level %>
-  </p>
-
-  <% if action_name != "show" %>
-    <%= link_to "Show this category", category, class: "rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-    <%= link_to 'Edit this category', edit_category_path(category), class: "rounded-lg py-3 ml-2 px-5 bg-gray-100 inline-block font-medium" %>
-    <hr class="mt-6">
+  </div>
+  <div class="table-cell overflow-y-scroll px-2 py-1" >
+    <%= category.active %>
+  </div>
+  <div class="table-cell overflow-y-scroll px-2 py-1" >
+    <%= category.super %>
+  </div>
+  <div class="table-cell">
+    <%= link_to 'Show', url_for(category), data: {turbo_frame: "_top"}, class: "btn-small"%>
+  </div>
+  <div class="table-cell">
+    <%= link_to 'Edit', url_for([:edit, category]), class: "btn-small"%>
+  </div>
+  <div class="table-cell">
+   <%= link_to 'Delete', url_for(category), method: :delete,  data: {turbo_frame: "_top",  turbo_method: :delete, turbo_confirm: "Are you sure?"}, class: "btn-small" %>
+  </div>
+  <%= turbo_stream.update "flash" do %>
+  <% flash.each do |flash_type, message| %>
+      <div class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block"><%= message %></div>
+  </div>
   <% end %>
-</div>
+  <% end %>
+<% end %>

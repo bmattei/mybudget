@@ -1,43 +1,28 @@
-<%= form_with(model: category, class: "contents", data: {turbo_frame: "_top"}) do |form| %>
-  <% if category.errors.any? %>
-    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
-      <h2><%= pluralize(category.errors.count, "error") %> prohibited this category from being saved:</h2>
+<%=turbo_frame_tag dom_id(category), class: "contents" do %>
+<%= form_with(model: category, class: "contents") do |form| %>
 
-      <ul>
-        <% category.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
-    </div>
+<div class="table-cell">
+  <%= form.text_field :name, class: "basic-field" %>
+</div>
+<div class="table-cell">
+  <%= form.check_box :active, class: "" %>
+</div>
+<div class="table-cell" >
+
+  <% if category.categories.count == 0 %>
+    <%= form.collection_select :category_id, Category.order(:name).where(category_id: nil).where.not(id: category.id),:id, :name ,{include_blank: "Select Category"} %>
   <% end %>
-
-  <div class="my-5">
-    <%= form.label :name %>
-    <%= form.text_field :name, class: "basic-field" %>
-  </div>
-  <div class="my-5">
-    <% if @category.categories.count == 0 %>
-    <%= form.label :category%>
-    <%= form.collection_select :category_id, Category.order(:name).where(category_id: nil).where.not(id: @category.id),:id, :name ,{include_blank: "Select Category"} %>
-    <% end %>
-  </div>
-  <div class="my-5">
-    <%= form.label :active %>
-    <%= form.check_box :active, class: "" %>
-  </div>
-
-  <div class="my-5">
+</div>
 
 
+<%= form.hidden_field :referrer, value: request.referrer %>
 
+<div class="table-cell">
+  <%= form.submit "Save", class: "btn-small" %>
+</div>
+<div class="table-cell">
+  <%= link_to "Cancel", request.referrer, data: { turbo_frame: "_top"}, class: "btn-small" %>
+</div>
 
-  <%= form.hidden_field :referrer, value: request.referrer %>
-
-  <div class="inline">
-    <%= form.submit class: "btn-small" %>
-  </div>
-  <div class="inline">
-    <%= link_to "Cancel", request.referrer, data: { turbo_frame: "_top"}, class: "btn-small" %>
-  </div>
-
+<% end %>
 <% end %>
