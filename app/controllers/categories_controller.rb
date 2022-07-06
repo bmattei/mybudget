@@ -27,11 +27,10 @@ class CategoriesController < ApplicationController
   # POST /categories or /categories.json
   def create
 #    redirect_url = params[:category][:referrer] || categories_url
-    binding.break
     @category = Category.new(category_params)
     respond_to do |format|
       if @category.save
-        flash[:notice] = "Category successfully created"
+        flash[:notice] = "Category was successfully created"
         format.html { render "create_category" }
         format.json { render :show, status: :created, location: @category }
       else
@@ -39,7 +38,6 @@ class CategoriesController < ApplicationController
         format.json { render json: @category.errors, status: :unprocessable_entity }
       end
     end
-    binding.break
   end
 
   # PATCH/PUT /categories/1 or /categories/1.json

@@ -12,13 +12,12 @@ class CategoriesTest < ApplicationSystemTestCase
 
   test "should create category" do
     visit categories_url
-    click_on "New category"
+    click_on "New"
     name = "AAA"
-    fill_in "Name", with: name
+    fill_in "category[name]", with: name
     find(:css, "#category_active").set(true)
     select categories(:transportation).name, from: "category[category_id]"
-    click_on "Create Category"
-
+    click_on "Save"
     assert_text "Category was successfully created"
     assert current_url, categories_url
     assert_text name
@@ -34,9 +33,9 @@ class CategoriesTest < ApplicationSystemTestCase
     assert_equal category.super, find('#category_category_id > option[selected="selected"').text
     name = "gasoline"
     new_cat = "misc"
-    fill_in "Name", with: name
+    fill_in "category[name]", with: name
     select "misc", from: "category[category_id]"
-    click_on "Update Category"
+    click_on "Save"
 
     assert_text "Category was successfully updated"
     assert current_url, categories
@@ -52,13 +51,14 @@ class CategoriesTest < ApplicationSystemTestCase
     category = categories(:misc)
     misc_row = rows.detect {|r| r.text.include?(category.name) }
     misc_row.click_on("Edit")
-    assert_text "Editing category", wait: 3
+    find(:css, "#category_active").set(true)
+
     assert_equal find("#category_name").value, category.name
     assert_text "Category", count: 0
     name = "miscellaneous"
 
-    fill_in "Name", with: name
-    click_on "Update Category"
+    fill_in  "category[name]", with: name
+    click_on "Save"
 
     assert_text "Category was successfully updated"
     assert current_url, categories
