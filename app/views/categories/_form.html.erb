@@ -1,28 +1,26 @@
 <%=turbo_frame_tag dom_id(category), class: "contents" do %>
-<%= form_with(model: category, class: "contents") do |form| %>
-
-<div class="table-cell">
-  <%= form.text_field :name, class: "basic-field" %>
-</div>
-<div class="table-cell">
-  <%= form.check_box :active, class: "" %>
-</div>
-<div class="table-cell" >
-
-  <% if category.categories.count == 0 %>
-    <%= form.collection_select :category_id, Category.order(:name).where(category_id: nil).where.not(id: category.id),:id, :name ,{include_blank: "Select Category"} %>
+  <%= form_with(model: category, class: "contents") do |form| %>
+    <div class="table-cell">
+        <%= form.text_field :name, class: "basic-field" %>
+    </div>
+    <div class="table-cell">
+      <%= form.check_box :active, class: "" %>
+    </div>
+    <div class="table-cell">
+      <% if category.categories.count == 0 %>
+        <%= form.collection_select :category_id, Category.order(:name).where(category_id: nil).where.not(id: category.id),:id, :name ,{include_blank: "Select Category"} %>
+      <% end %>
+    </div>
+    <div class="table-cell">
+      <%= form.submit "Save", class: "btn-small" %>
+    </div>
+    <div class="table-cell">
+      <%= link_to "Cancel", request.referrer, data: { turbo_frame: "_top"}, class: "btn-small" %>
+    </div>
   <% end %>
-</div>
-
-
-<%= form.hidden_field :referrer, value: request.referrer %>
-
-<div class="table-cell">
-  <%= form.submit "Save", class: "btn-small" %>
-</div>
-<div class="table-cell">
-  <%= link_to "Cancel", request.referrer, data: { turbo_frame: "_top"}, class: "btn-small" %>
-</div>
-
-<% end %>
+  <%= turbo_stream.append "flash" do %>
+    <% category.errors.each do |error| %>
+      <li><%= error.full_message %></li>
+    <% end %>
+  <% end %>
 <% end %>

@@ -17,10 +17,5 @@
   <div class="table-cell">
    <%= link_to 'Delete', url_for(category), method: :delete,  data: {turbo_frame: "_top",  turbo_method: :delete, turbo_confirm: "Are you sure?"}, class: "btn-small" %>
   </div>
-  <%= turbo_stream.update "flash" do %>
-  <% flash.each do |flash_type, message| %>
-      <div class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block"><%= message %></div>
-  </div>
-  <% end %>
-  <% end %>
+  <%= render partial: "shared/flash" %>
 <% end %>

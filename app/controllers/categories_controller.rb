@@ -31,10 +31,10 @@ class CategoriesController < ApplicationController
     respond_to do |format|
       if @category.save
         flash[:notice] = "Category was successfully created"
-        format.html { render "create_category" }
+        format.html { render "create" }
         format.json { render :show, status: :created, location: @category }
       else
-        format.html { render :new,  status: :unprocessable_entity }
+        format.html { render :new }
         format.json { render json: @category.errors, status: :unprocessable_entity }
       end
     end
