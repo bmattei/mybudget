@@ -1,5 +1,5 @@
 <%=turbo_frame_tag dom_id(category), class: "contents" do %>
-  <%= form_with(model: category, class: "contents") do |form| %>
+  <%= form_with(model: category, class: "table-row contents") do |form| %>
     <div class="table-cell">
         <%= form.text_field :name, class: "basic-field" %>
     </div>
@@ -18,9 +18,10 @@
       <%= link_to "Cancel", request.referrer, data: { turbo_frame: "_top"}, class: "btn-small" %>
     </div>
   <% end %>
+
   <%= turbo_stream.append "flash" do %>
     <% category.errors.each do |error| %>
-      <li><%= error.full_message %></li>
+      <div class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block"><%= error.full_message %></div>
     <% end %>
   <% end %>
 <% end %>

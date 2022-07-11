@@ -26,8 +26,12 @@
     <div class="container mx-auto">
       <div class="flex flex-row flex-wrap py-4">
 
+        <turbo-frame id="flash">
+          <%= render 'shared/flash' %>
+        </turbo-frame>
         <main role="main" class="w-full  pt-1 px-2 ml-10">
           <div class="flex flex-row">
+
             <div class="  basis-3/4">
               <%= yield %>
               <%= turbo_frame_tag "modal" %>
