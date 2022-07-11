@@ -10,6 +10,13 @@ class CategoriesTest < ApplicationSystemTestCase
     assert_selector "h1", text: "Categories"
   end
 
+  test "New should put form in first row" do
+    visit categories_url
+    click_on "New"
+    assert_text "Cancel"
+    first_row = find(".table-row-group .table-row:first-child")
+    assert_match (/http:.*\/categories/) , first_row['action']
+  end
   test "should create category" do
     visit categories_url
     click_on "New"
@@ -21,6 +28,27 @@ class CategoriesTest < ApplicationSystemTestCase
     assert_text "Category was successfully created"
     assert current_url, categories_url
     assert_text name
+  end
+  test "Invalid create should display error" do
+    visit categories_url
+    click_on "New"
+    find(:css, "#category_active").set(true)
+    select categories(:transportation).name, from: "category[category_id]"
+    click_on "Save"
+    assert_text "Name can't be blank"
+    assert current_url, categories_url
+  end
+  test "Newly created category should be at top of table" do
+    visit categories_url
+    click_on "New"
+    name = "AAA"
+    fill_in "category[name]", with: name
+    find(:css, "#category_active").set(true)
+    select categories(:transportation).name, from: "category[category_id]"
+    click_on "Save"
+    assert_text "Category was successfully created"
+    first_row = find_all(".table-row-group .table-row").first
+    assert_equal "#{name} true #{categories(:transportation).name} Show Edit Delete", first_row.text
   end
 
   test "should update 2nd level category" do
