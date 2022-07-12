@@ -1,84 +1,78 @@
-<div data-controller="entry">
+<%=turbo_frame_tag dom_id(entry), class: "contents" do %>
+<div data-controller="entry", class="contents">
+<%= form_with(model: entry, class: "contents table-row", data: { turbo_frame: "_top"})  do |form| %>
+<%= form.hidden_field :referrer, value: request.referrer %>
+<%= form.hidden_field :account_id, value: entry.account.id %>
 
-<%= form_with(model: entry, class: "contents", data: { turbo_frame: "_top"})  do |form| %>
-  <% if entry.errors.any? %>
-    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
-      <h2><%= pluralize(entry.errors.count, "error") %> prohibited this entry from being saved:</h2>
-
-      <ul>
-        <% entry.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
-
-  <%= form.hidden_field :referrer, value: request.referrer %>
-
-
-  <div class="my-5">
-    <% if !entry.account %>
-    <%= form.collection_select :account_id, Account.all, :id, :name, class: "basic-field" %>
-    <% else %>
-    <%= form.collection_select :account_id, [entry.account], :id, :name, class: "basic-field" %>
-    <% end %>
+  <div class="table-cell">
+    <%= form.check_box :cleared  %>
   </div>
 
-
-  <div class="my-5">
+  <div class="table-cell">
+    <% if current_page?(action: :new) %>
+    <%= form.collection_select :category_id, Category.where(active:true).order(:name),:id, :name ,
+             {include_blank: "Select Category"},
+             {data: {action: "change->entry#on_set_category"}, class: "basic-field"}
+              %>
+    <% else %>
+    <%= form.collection_select :category_id, Category.order(:name),:id, :name ,
+             {include_blank: "Transfer"},
+             {data: {action: "change->entry#on_set_category"}, class: "basic-field"}
+              %>
+     <% end %>
+  </div>
+  <div class="table-cell">
     <%= form.date_field :entry_date, class: "basic-field" %>
   </div>
 
-  <% if entry.account && entry.account.has_checking %>
-  <div class="my-5">
+  <div class="table-cell">
+    <% if entry.account && entry.account.has_checking %>
     <%= form.number_field :check_number, placeholder: "Check Number", class: "basic-field px-3" %>
+    <% end %>
   </div>
-  <% end %>
 
-  <div class="my-5">
+  <div class="table-cell">
+
     <%= form.text_field :payee, placeholder: "Payee",
         data: {action: "entry#on_set_payee"},
-        class: "basic-field" %>
+        class: "basic-field" + (entry.category ? "" : " hidden") %>
+    <%= form.collection_select :transfer_account_id,
+             Account.order(in_menu: :asc).where.not(id: entry.account_id), :id, :name,
+             {include_blank: "Select Transfer Account"},
+             {data:{action: "entry#on_set_transfer"},
+             class: "basic-field" + (entry.category ? " hidden" : "") } %>
   </div>
-  <div class="my-5">
+  <div class="table-cell">
     <%= form.text_field :memo, placeholder: "Memo",
         class: "basic-field" %>
   </div>
-   <div class="my-5">
-     <% if current_page?(action: :new)%>
-     <%= form.collection_select :category_id, Category.where(active:true).order(:name),:id, :name ,
-              {include_blank: "Select Category"},
-              {data: {action: "entry#on_set_category"}, class: "basic-field"}
-               %>
-     <% else %>
-     <%= form.collection_select :category_id, Category.order(:name),:id, :name ,
-              {include_blank: "Select Category"},
-              {data: {action: "entry#on_set_category"}, class: "basic-field"}
-               %>
-      <% end %>
-   </div>
- <div class="my-5">
-   <%= form.collection_select :transfer_account_id,
-        Account.order(in_menu: :asc).where.not(id: entry.account_id), :id, :name,
-        {include_blank: "Select Transfer Account"},
-        {data:{action: "entry#on_set_transfer"}, class: "basic-field"} %>
-  </div>
-  <div class="my-5">
+
+
+  <div class="table-cell">
     <%= form.number_field :inflow, placeholder: "Inflow", in: 0.01..1000000.99, step: 0.01,
         data: {action: "entry#on_set_inflow"},
          class: "basic-field" %>
   </div>
-  <div class="my-5">
+  <div class="table-cell">
     <%= form.number_field :outflow, placeholder: "Outflow",in: 0.01..1000000.99, step: 0.01,
     data: {action: "entry#on_set_outflow"},
     class: "basic-field" %>
   </div>
+  <div class="table-cell" >
 
- <div class="inline">
-    <%= form.submit class: "btn-small" %>
+    </div>
+
+ <div class="table-cell">
+    <%= form.submit "Save", class: "btn-small" %>
   </div>
-  <div class="inline">
+  <div class="table-cell">
     <%= link_to "Cancel", request.referrer, data: { turbo_frame: "_top"}, class: "btn-small" %>
   </div>
 <% end %>
 </div>
+<%= turbo_stream.append "flash" do %>
+  <% entry.errors.each do |error| %>
+    <li><%= error.full_message %></li>
+  <% end %>
+<% end %>
+<% end %>

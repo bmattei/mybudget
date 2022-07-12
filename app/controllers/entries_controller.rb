@@ -83,7 +83,7 @@ class EntriesController < ApplicationController
       if interval.eql?("year")
         @report_data.each {|k,v| k[0] = k[0].to_date.year}
       else
-        @report_data.each {|k,v| k[0] = k[0].to_date} 
+        @report_data.each {|k,v| k[0] = k[0].to_date}
       end
       @report_data = multi_chart_data(@report_data).sort{|a,b| b <=> a }.to_h
     else
@@ -114,11 +114,10 @@ class EntriesController < ApplicationController
   def create
     session[:last_date] = entry_params[:entry_date]
     @entry = Entry.new(entry_params)
-    redirect_url = params[:entry][:referrer] || account_url(@entry.account)
 
     respond_to do |format|
       if @entry.save
-        format.html { redirect_to redirect_url, notice: "Entry was successfully created." }
+        format.html { redirect_to account_url(@entry.account), notice: "Entry was successfully created." }
         format.json { render :show, status: :created, location: @entry }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -129,9 +128,7 @@ class EntriesController < ApplicationController
 
   # PATCH/PUT /entries/1 or /entries/1.json
   def update
-
     redirect_url = params[:entry][:referrer] || account_url(@entry.account)
-    puts "\n\n************* REDIRECT EDIT BUG #{redirect_url}\n\n"
     respond_to do |format|
       if @entry.update(entry_params)
         format.html { redirect_to redirect_url, notice: "Entry was successfully updated." }

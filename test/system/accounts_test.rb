@@ -10,6 +10,9 @@ class AccountsTest < ApplicationSystemTestCase
   INFLOW_COL = 6
   OUTFLOW_COL = 7
   BALANCE_COL = 8
+  CATEGORY_ID = "category_id"
+  CATEGORY_ID = "category_id"
+
 
   setup do
     @account = accounts(:dcu_checking)
@@ -17,36 +20,74 @@ class AccountsTest < ApplicationSystemTestCase
     @entry = entries(:discover_init)
   end
 
-  # Theses tests were moved from entry test to here
-  test "should update Entry" do
-    visit account_url(@entry.account)
-    click_on "Edit", match: :first
-    fill_in "Outflow", with: @entry.amount.abs
-    select categories(:transportation).name, from: "entry[category_id]"
-    fill_in "entry_check_number", with: @entry.check_number
-    fill_in "entry_entry_date", with: @entry.entry_date
-    fill_in "entry_payee", with: @entry.payee
-    click_on "Update Entry"
-
-    assert_text "Entry was successfully updated"
-    assert_equal account_url(@entry.account), current_url
+  test "New on account show page should put up form for new entry at top of table" do
+    visit account_url(@account)
+    click_on "New"
+    assert_text "Cancel"
+    assert_selector ".table-row-group .table-row:first-child .table-cell input#entry_entry_date"
+    assert_selector ".table-row-group .table-row:first-child .table-cell select#entry_category_id"
+    assert_selector ".table-row-group .table-row:first-child .table-cell input#entry_check_number"
+    assert_selector ".table-row-group .table-row:first-child .table-cell select#entry_transfer_account_id"
+    assert_selector ".table-row-group .table-row:first-child .table-cell input#entry_memo"
+    assert_selector ".table-row-group .table-row:first-child .table-cell input#entry_inflow"
+    assert_selector ".table-row-group .table-row:first-child .table-cell input#entry_outflow"
+    assert_text @account.name
   end
-
   test "should create entry" do
     visit account_url(@account)
     click_on "New", match: :first
-
     payee = "ODD NAME Restaurant"
     fill_in "Outflow", with: 83.11
     select categories(:restaurants).name, from: "entry[category_id]"
     fill_in "entry_entry_date", with: Date.today
     fill_in "entry_payee", with: payee
-    click_on "Create Entry"
-
+    click_on "Save"
     assert_text "Entry was successfully created"
     assert_equal current_url, account_url(@account)
-    assert_text payee
   end
+  test "New entry should be in the first row of the table " do
+    visit account_url(@account)
+    click_on "New", match: :first
+    payee = "ODD NAME Restaurant"
+    fill_in "Outflow", with: 83.11
+    select categories(:restaurants).name, from: "entry[category_id]"
+    fill_in "entry_entry_date", with: Date.today
+    fill_in "entry_payee", with: payee
+    click_on "Save"
+    assert_text "Entry was successfully created"
+    assert_equal current_url, account_url(@account)
+    # assert_selector ".table-row-group .table-row:first-child .table-cell"
+    # I think this is complicated by the new_entry turbo-fram
+    rows = find_all(".table-row-group .table-row")
+    rows.first.assert_selector ".table-cell", text: payee
+
+  end
+  test "Should get error if you attempt to create entry with no inflow or outflow" do
+    visit account_url(@account)
+    click_on "New", match: :first
+    payee = "ODD NAME Restaurant"
+    select categories(:restaurants).name, from: "entry[category_id]"
+    fill_in "entry_entry_date", with: Date.today
+    fill_in "entry_payee", with: payee
+    click_on "Save"
+    assert_text "Amount can't be blank"
+  end
+  # Theses tests were moved from entry test to here
+  test "should update Entry" do
+    visit account_url(@entry.account)
+    click_on "Edit", match: :first
+    fill_in "Outflow", with: @entry.amount.abs
+    select categories(:transportation).name, from: "entry_category_id"
+    fill_in "entry_check_number", with: @entry.check_number
+    fill_in "entry_entry_date", with: @entry.entry_date
+    fill_in "entry_payee", with: @entry.payee
+    click_on "Save"
+
+    assert_text "Entry was successfully updated"
+    assert_equal account_url(@entry.account), current_url
+  end
+
+
   #  Added this test because creating entries was working on the first account
   #  in fixtures - only and I was not catching it.  This test verifies it works on other accounts
   test "should create discover entry" do
@@ -60,8 +101,7 @@ class AccountsTest < ApplicationSystemTestCase
     select categories(:restaurants).name, from: "entry[category_id]"
     fill_in "entry_entry_date", with: Date.today
     fill_in "entry_payee", with: payee
-    click_on "Create Entry"
-
+    click_on "Save"
     assert_text "Entry was successfully created"
     assert_equal current_url, account_url(@discover)
     assert_text payee
@@ -77,7 +117,7 @@ class AccountsTest < ApplicationSystemTestCase
     date = Date.today - 100
     fill_in "entry_entry_date", with: date
     fill_in "entry_payee", with: payee
-    click_on "Create Entry"
+    click_on "Save"
     assert_text "Entry was successfully created"
 
     click_on "New"
@@ -95,7 +135,7 @@ class AccountsTest < ApplicationSystemTestCase
     fill_in "entry_entry_date", with: Date.today + 1
     select  other_account.name, from: "entry_transfer_account_id"
     fill_in "entry_outflow", with: amount
-    click_on "Create Entry"
+    click_on "Save"
     assert_text "Entry was successfully created", wait: 5
   end
   test "Should create transfer out entry with correct outflow" do
@@ -108,7 +148,7 @@ class AccountsTest < ApplicationSystemTestCase
     fill_in "entry_entry_date", with: Date.today + 1
     select  other_account.name, from: "entry_transfer_account_id"
     fill_in "entry_outflow", with: amount
-    click_on "Create Entry"
+    click_on "Save"
 
     assert_text "Entry was successfully created", wait: 5
     first_entry = all(".table-row-group>.table-row").first
@@ -126,7 +166,7 @@ class AccountsTest < ApplicationSystemTestCase
     fill_in "entry_entry_date", with: Date.today + 1
     select  other_account.name, from: "entry_transfer_account_id"
     fill_in "entry_outflow", with: amount
-    click_on "Create Entry"
+    click_on "Save"
 
     assert_text "Entry was successfully created", wait: 5
 
@@ -147,7 +187,7 @@ class AccountsTest < ApplicationSystemTestCase
     select  other_account.name, from: "entry_transfer_account_id"
     fill_in "entry_outflow", with: amount
 
-    click_on "Create Entry"
+    click_on "Save"
     assert_text "Entry was successfully created", wait: 5
 
     visit account_url(other_account)
@@ -166,7 +206,7 @@ class AccountsTest < ApplicationSystemTestCase
     fill_in "entry_entry_date", with: Date.today + 1
     fill_in "entry_inflow", with: amount
     select  other_account.name, from: "entry_transfer_account_id"
-    click_on "Create Entry"
+    click_on "Save"
 
     assert_text "Entry was successfully created", wait: 5
     visit account_url(other_account)
@@ -671,14 +711,15 @@ class AccountsTest < ApplicationSystemTestCase
       date_before: filter_date_before})
     click_on 'New'
     assert_text 'Cancel'
+    category = categories(:groceries)
+    find("#entry_category_id").select(category.name)
     payee = "Money Taker Grocery Store"
     find("#entry_payee").fill_in(with: payee)
 
     find("#entry_entry_date").fill_in with: filter_date_before
-    category = categories(:groceries)
-    find("#entry_category_id").select(category.name)
+
     find("#entry_outflow").fill_in(with: "176.89")
-    click_on "Create Entry"
+    click_on "Save"
     assert_equal filter_date_after.to_s, find("#date_after").value
     assert_equal filter_date_before.to_s, find("#date_before").value
     assert_text payee
@@ -704,10 +745,10 @@ class AccountsTest < ApplicationSystemTestCase
     assert_text 'Cancel'
     payee = "Change Payee $$$"
     find("#entry_payee").fill_in(with: payee)
-    click_on "Update Entry"
+    click_on "Save"
+    assert_text "Entry was successfully updated"
     assert_equal filter_date_after.to_s, find("#date_after").value
     assert_equal filter_date_before.to_s, find("#date_before").value
-    assert_text payee
   end
 
 

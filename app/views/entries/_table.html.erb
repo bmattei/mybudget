@@ -18,26 +18,8 @@
   </div>
 
   <div class="table-row-group">
-    <% records.each do |rec| %>
-      <div class="table-row even:bg-blue-100">
-        <% display_columns.each do |column_info| %>
-          <div class="table-cell overflow-y-scroll px-2 py-1" >
-            <%= as(rec.send(column_info[:model_method]),column_info[:as]) %>
-          </div>
-        <% end %>
-        <% if !defined?(allow_edit) || allow_edit %>
-        <div class="table-cell">
-          <%= link_to 'Edit', edit_entry_path(rec), data: {turbo_frame: "_top"}, class: "btn-small"%>
-        </div>
-        <% end %>
-        <% if !defined?(allow_delete) || allow_delete %>
-        <div class="table-cell">
-         <%= link_to 'Delete', entry_path(rec), method: :delete,  data: {turbo_frame: "_top",  turbo_method: :delete, turbo_confirm: "Are you sure?"}, class: "btn-small" %>
-        </div>
-        <% end %>
-      </div>
-    <% end %>
-
+    <%= turbo_frame_tag "new_entry", class: "contents" %>
+    <%= render records %>
   </div>
 
 </div>

@@ -1,8 +1,8 @@
 <div class="w-full">
 
-  <% if notice.present? %>
-    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
-  <% end %>
+  <div id="flash" class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block">
+  </div>
+
   <% content_for :title do %>
     <%= @account.name %>
   <% end %>
@@ -12,7 +12,7 @@
   </div>
 
   <div class='my-4'>
-    <%= link_to 'New', new_entry_path(account_id: @account), data: {turbo_frame: "_top", account:@account}, class: "btn-primary" %>
+    <%= link_to 'New', new_entry_path(account_id: @account), data: {turbo_frame: "new_entry", account:@account}, class: "btn-primary" %>
   </div>
   <div id="entries" class="min-w-full">
     <%= render "/entries/table", records: @entries, display_columns: EntriesController.new.display_columns(true) %>

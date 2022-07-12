@@ -1,47 +1,39 @@
-<div id="<%= dom_id entry %>">
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Account:</strong>
-    <%= entry.account_id %>
-  </p>
+<%= turbo_frame_tag dom_id(entry), class: "table-row even:bg-blue-100" do %>
 
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Entry date:</strong>
-    <%= entry.entry_date %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Check number:</strong>
-    <%= entry.check_number %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Payee:</strong>
-    <%= entry.payee %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Amount:</strong>
-    <%= entry.amount %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Transfer account:</strong>
-    <%= entry.transfer_account_id %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Transfer entry:</strong>
-    <%= entry.transfer_entry_id %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Category:</strong>
-    <%= entry.category_id %>
-  </p>
-
-  <% if action_name != "show" %>
-    <%= link_to "Show this entry", entry, class: "rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-    <%= link_to 'Edit this entry', edit_entry_path(entry), class: "rounded-lg py-3 ml-2 px-5 bg-gray-100 inline-block font-medium" %>
-    <hr class="mt-6">
-  <% end %>
+<div class="table-cell overflow-y-scroll px-2 py-1" >
+    <%= entry.cleared %>
 </div>
+<div class="table-cell overflow-y-scroll px-2 py-1" >
+
+    <%= entry.category_name || "Transfer"%>
+</div>
+<div class="table-cell overflow-y-scroll px-2 py-1" >
+    <%= as(entry.entry_date, :date) %>
+</div>
+<div class="table-cell overflow-y-scroll px-2 py-1" >
+    <%= entry.check_number %>
+</div>
+<div class="table-cell overflow-y-scroll px-2 py-1" >
+    <%= entry.transfer_account ? entry.transfer_account.name : entry.payee %>
+</div>
+<div class="table-cell overflow-y-scroll px-2 py-1" >
+    <%= entry.memo %>
+</div>
+<div class="table-cell overflow-y-scroll px-2 py-1" >
+    <%= as(entry.inflow, :money) %>
+</div>
+<div class="table-cell overflow-y-scroll px-2 py-1" >
+    <%= as(entry.outflow, :money) %>
+</div>
+<div class="table-cell overflow-y-scroll px-2 py-1" >
+    <%= as(entry.balance, :money) %>
+</div>
+<div class="table-cell">
+  <%= link_to 'Edit', edit_entry_path(entry), class: "btn-small"%>
+</div>
+<div class="table-cell">
+ <%= link_to 'Delete', entry_path(entry), method: :delete,  data: {turbo_frame: "_top",  turbo_method: :delete, turbo_confirm: "Are you sure?"}, class: "btn-small" %>
+</div>
+<%#= render partial: "shared/flash" %>
+
+<% end %>
