@@ -3,7 +3,7 @@ class AccountsController < ApplicationController
   before_action :set_account, only: %i[ show edit update destroy ]
   helper_method :display_columns, :allow_edit, :allow_show, :allow_delete
 
-
+  # Testing if I have branch seetup
   # GET /accounts or /accounts.json
   def index
     @pagy ,@accounts = pagy(Account.filter_by(filtering_params).order("#{params[:column]} #{params[:direction]}"),
