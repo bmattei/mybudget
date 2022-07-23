@@ -20,6 +20,24 @@ class AccountsTest < ApplicationSystemTestCase
     @entry = entries(:discover_init)
   end
 
+  test "should create account" do
+    visit accounts_url
+    click_on "New"
+    bank = "Wonder Band"
+    name = "MyNewName"
+    number = "A1222222"
+    fill_in "account_bank", with: bank
+    check "account_has_checking"
+    fill_in "account_name", with: name
+    fill_in "account_number", with: number
+    click_on "Save"
+    assert current_url, accounts_url
+    assert_text "Account was successfully created"
+    assert_text name
+    assert_text number
+
+  end
+
   test "New on account show page should put up form for new entry at top of table" do
     visit account_url(@account)
     click_on "New"
@@ -233,45 +251,32 @@ class AccountsTest < ApplicationSystemTestCase
     assert_text @account.bank
 
   end
-  test "should create account" do
-    visit accounts_url
-    click_on "New account"
 
-    name = "MyNewName"
-    number = "A1222222"
-    fill_in "Bank", with: @account.bank
-    check "Has checking" if @account.has_checking
-    fill_in "Name", with: name
-    fill_in "Number", with: number
-    click_on "Create Account"
-
-    assert current_url, accounts_url
-    assert_text "Account was successfully created"
-    assert_text name
-    assert_text number
-  end
 
   test "should get an error if you attempt to create account without bank" do
     visit accounts_url
     name = "NoBankAccount"
     number = "NoBank_123"
-    click_on "New account"
-    fill_in "Name", with: name
-    fill_in "Number", with:number
-    click_on "Create Account"
+    click_on "New"
+    fill_in "account_name", with: name
+    fill_in "account_number", with: number
+    click_on "Save"
+    sleep 3
+    binding.break
     assert_text "Bank can't be blank"
 
   end
 
-  test "Should be able to edit and account" do
+  test "Should be able to edit an account" do
     visit accounts_url
     assert_text "Accounts", wait: 5
     find(".table-row-group").click_on "Edit", match: :first
-
-    assert_text "Editing account", wait: 5
-    old_name = find_field('Name').value
-    fill_in "Name", with: name
-    click_on "Update Account"
+    assert has_css?("#account_bank")
+    old_name = find_field('account_name').value
+    name = "NewAccountName909"
+    # NOTE: BUG IN fill_in sometimes not clearing.
+    fill_in "account_name", with: name,  fill_options: { clear: :backspace }
+    click_on "Save"
     assert current_url, accounts_url
     assert_text name
     assert_text old_name, count:0
@@ -282,10 +287,10 @@ class AccountsTest < ApplicationSystemTestCase
     name = "CancelAccount"
     number = "CancelNumber123"
     bank = "CancelBank"
-    click_on "New account"
-    fill_in "Name", with: name
-    fill_in "Number", with:number
-    fill_in "Bank", with:bank
+    click_on "New"
+    fill_in "account_name", with: name
+    fill_in "account_number", with:number
+    fill_in "account_bank", with:bank
     click_on "Cancel"
     assert current_url, accounts_url
     assert_text name, count:0
@@ -335,19 +340,20 @@ class AccountsTest < ApplicationSystemTestCase
   test "should be able to sort by Bank" do
     visit accounts_url
     click_on "Bank"
-    rows_count = all(".table-row-group>.table-row").count
-    last_bank = all( ".table-row-group>.table-row:nth-child(1)>.table-cell").first.text
-    (2..rows_count).each do |i|
-         bank =  all( ".table-row-group>.table-row:nth-child(#{i})>.table-cell").first.text
+    sleep 1
+    rows = all(".table-row-group .table-row")
+    last_bank = rows.first.find( ".table-cell:nth-child(1)").text
+    (1...rows.count).each do |i|
+         bank =  rows[i].find(".table-cell:nth-child(1)").text
          assert bank >= last_bank, "#{bank} >= #{last_bank}"
     end
     click_on "Bank"
     # I think I need this because of turbo
-    sleep(3)
-
-    last_bank = all( ".table-row-group>.table-row:nth-child(1)>.table-cell:nth-child(1)").first.text
-    (2..rows_count).each do |i|
-        bank =  all( ".table-row-group>.table-row:nth-child(#{i})>.table-cell").first.text
+    sleep(1)
+    rows = all(".table-row-group .table-row")
+    last_bank = rows.first.find( ".table-cell:nth-child(1)").text
+    (1...rows.count).each do |i|
+        bank =  rows[i].find(".table-cell:nth-child(1)").text
         assert bank <= last_bank, "#{bank} <= #{last_bank}"
     end
 
@@ -355,19 +361,21 @@ class AccountsTest < ApplicationSystemTestCase
   test "should be able to sort by Name" do
     visit accounts_url
     click_on "Name"
-    rows_count = all(".table-row-group>.table-row").count
-    last_name = all( ".table-row-group>.table-row:nth-child(1)>.table-cell:nth-child(2)").first.text
-    (2..rows_count).each do |i|
-         name =  all( ".table-row-group>.table-row:nth-child(#{i})>.table-cell:nth-child(2)").first.text
+    sleep(2)
+    rows = all(".table-row-group .table-row")
+    last_name = rows.first.find( ".table-cell:nth-child(2)").text
+
+    (1...rows.count).each do |i|
+         name =  rows[i].find( ".table-cell:nth-child(2)").text
          assert name>= last_name, "#{name} >= #{last_name}"
     end
     click_on "Name"
     # I think I need this because of turbo
     sleep(3)
-
-    last_name = all( ".table-row-group>.table-row:nth-child(1)>.table-cell:nth-child(2)").first.text
-    (2..rows_count).each do |i|
-        name =  all( ".table-row-group>.table-row:nth-child(#{i})>.table-cell:nth-child(2)").first.text
+    rows = all(".table-row-group .table-row")
+    last_name = rows.first.find( ".table-cell:nth-child(2)").text
+    (1...rows.count).each do |i|
+        name =  rows[i].find( ".table-cell:nth-child(2)").text
         assert name <= last_name, "#{name} <= #{last_name}"
     end
 
@@ -376,19 +384,19 @@ class AccountsTest < ApplicationSystemTestCase
     visit accounts_url
     click_on "Number"
     assert_text "New"
-    rows_count = all(".table-row-group>.table-row").count
-    last_number = all( ".table-row-group>.table-row:nth-child(1)>.table-cell:nth-child(3)").first.text
-    (2..rows_count).each do |i|
-         number =  all( ".table-row-group>.table-row:nth-child(#{i})>.table-cell:nth-child(3)").first.text
+    rows = all(".table-row-group .table-row")
+    last_number = rows.first.find( ".table-cell:nth-child(3)").text
+    (1...rows.count).each do |i|
+         number =  rows[i].find( ".table-cell:nth-child(3)").text
          assert number>= last_number, "#{number} >= #{last_number}"
     end
     click_on "Number"
     # I think I need this because of turbo
     assert_text "New"
-
-    last_number = all( ".table-row-group>.table-row:nth-child(1)>.table-cell:nth-child(3)").first.text
-    (2..rows_count).each do |i|
-        number =  all( ".table-row-group>.table-row:nth-child(#{i})>.table-cell:nth-child(3)").first.text
+    rows = all(".table-row-group .table-row")
+    last_number = rows.first.find( ".table-cell:nth-child(3)").text
+    (1...rows.count).each do |i|
+        number = rows[i].find( ".table-cell:nth-child(3)").text
         assert number <= last_number, "#{number} <= #{last_number}"
     end
 
@@ -397,19 +405,21 @@ class AccountsTest < ApplicationSystemTestCase
   test "should be able to sort by checking" do
     visit accounts_url
     click_on "Checking"
-    rows_count = all(".table-row-group>.table-row").count
-    last_value = all( ".table-row-group>.table-row:nth-child(1)>.table-cell:nth-child(4)").first.text
-    (2..rows_count).each do |i|
-         value =  all( ".table-row-group>.table-row:nth-child(#{i})>.table-cell:nth-child(4)").first.text
+    sleep 1
+    rows = all(".table-row-group .table-row")
+    last_value = rows.first.find(".table-cell:nth-child(4)").text
+    (1...rows.count).each do |i|
+         value= rows[i].find(".table-cell:nth-child(4)").text
          assert value >= last_value, "#{value} >= #{last_value}"
     end
     click_on "Checking"
-    # I think I need this because of turbo
-    sleep(3)
 
-    last_value = all( ".table-row-group>.table-row:nth-child(1)>.table-cell:nth-child(4)").first.text
-    (2..rows_count).each do |i|
-        value =  all( ".table-row-group>.table-row:nth-child(#{i})>.table-cell:nth-child(4)").first.text
+    # I think I need this because of turbo
+    sleep(1)
+    rows = all(".table-row-group .table-row")
+    last_value = rows.first.find(".table-cell:nth-child(4)").text
+    (2...rows.count).each do |i|
+        value= rows[i].find(".table-cell:nth-child(4)").text
         assert value <= last_value, "#{value} <= #{last_value}"
     end
 

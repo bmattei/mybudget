@@ -1,0 +1,50 @@
+<div class="table table-auto w-full">
+  <div class="table-header-group">
+    <div class="table-row bg-blue-100">
+      <div class="table-cell px-2 py-4 test-left font-bold inline">
+        <%= sort_indicator if params[:column] == "bank" %>
+        <%= sort_link("Bank", "bank") %>
+      </div>
+      <div class="table-cell px-2 py-4 test-left font-bold inline">
+        <%= sort_indicator if params[:column] == "name" %>
+        <%= sort_link("Name", "name") %>
+      </div>
+      <div class="table-cell px-2 py-4 test-left font-bold inline">
+        <%= sort_indicator if params[:column] == "number" %>
+        <%= sort_link("Number", "number") %>
+      </div>
+      <div class="table-cell px-2 py-4 test-left font-bold inline">
+        <%= sort_indicator if params[:column] == "has_checking" %>
+        <%= sort_link("Checking", "has_checking") %>
+      </div>
+      <div class="table-cell px-2 py-4 test-left font-bold inline">
+        <%= sort_indicator if params[:column] == "in_menu" %>
+        <%= sort_link("In Menu", "in_menu") %>
+      </div>
+
+      <div class="table-cell px-2 py-4 text-transparent">EDIT</div>
+      <div class="table-cell px-2 py-4 text-transparent">EDIT</div>
+      <div class="table-cell px-2 py-4 text-transparent">DELETE</div>
+    </div>
+  </div>
+
+  <div class="table-row-group" id="table-list">
+
+    <%= turbo_frame_tag "accounts", id:"accounts", class:"min-w-full contents" do %>
+    <%= turbo_frame_tag "new_account", class: "contents" %>
+    <%= render accounts%>
+  <% end %>
+  <div id="pager" class="min-w-full my-8 flex justify-between">
+    <div>
+      <% if pagy.prev %>
+        <%= link_to "< Previous page", url_for(params.permit!.merge(page: @pagy.prev)), class: "btn-primary" %>
+      <% end %>
+    </div>
+    <div class="text-right">
+      <% if pagy.next %>
+        <%= link_to "Next page >", url_for(params.permit!.merge(page: @pagy.next)), class: "btn-primary" %>
+      <% end %>
+    </div>
+  </div>
+</div>
+</div>

@@ -1,27 +1,29 @@
-<div id="<%= dom_id account %>">
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Name:</strong>
-    <%= account.name %>
-  </p>
+<%= turbo_frame_tag dom_id(account), class: "table-row even:bg-blue-100" do %>
 
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Number:</strong>
-    <%= account.number %>
-  </p>
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Bank:</strong>
+  <div class="table-cell overflow-y-scroll px-2 py-1" >
     <%= account.bank %>
-  </p>
+  </div>
 
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Has checking:</strong>
+  <div class="table-cell overflow-y-scroll px-2 py-1" >
+    <%= account.name %>
+  </div>
+  <div class="table-cell overflow-y-scroll px-2 py-1" >
+    <%= account.number %>
+  </div>
+  <div class="table-cell overflow-y-scroll px-2 py-1" >
     <%= account.has_checking %>
-  </p>
-
-  <% if action_name != "show" %>
-    <%= link_to "Show this account", account, class: "rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-    <%= link_to 'Edit this account', edit_account_path(account), class: "rounded-lg py-3 ml-2 px-5 bg-gray-100 inline-block font-medium" %>
-    <hr class="mt-6">
-  <% end %>
-</div>
+  </div>
+  <div class="table-cell overflow-y-scroll px-2 py-1" >
+    <%= account.in_menu %>
+  </div>
+  <div class="table-cell">
+    <%= link_to 'Show', url_for(account), data: {turbo_frame: "_top"}, class: "btn-small"%>
+  </div>
+  <div class="table-cell">
+    <%= link_to 'Edit', url_for([:edit, account]), class: "btn-small"%>
+  </div>
+  <div class="table-cell">
+   <%= link_to 'Delete', url_for(account), method: :delete,  data: {turbo_frame: "_top",  turbo_method: :delete, turbo_confirm: "Are you sure?"}, class: "btn-small" %>
+  </div>
+  <%= render partial: "shared/flash" %>
+<% end %>

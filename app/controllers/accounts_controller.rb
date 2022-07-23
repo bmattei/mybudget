@@ -3,7 +3,6 @@ class AccountsController < ApplicationController
   before_action :set_account, only: %i[ show edit update destroy ]
   helper_method :display_columns, :allow_edit, :allow_show, :allow_delete
 
-  # Testing if I have branch seetup
   # GET /accounts or /accounts.json
   def index
     @pagy ,@accounts = pagy(Account.filter_by(filtering_params).order("#{params[:column]} #{params[:direction]}"),
@@ -36,10 +35,10 @@ class AccountsController < ApplicationController
   # POST /accounts or /accounts.json
   def create
     @account = Account.new(account_params)
-
     respond_to do |format|
       if @account.save
-        format.html { redirect_to accounts_url, notice: "Account was successfully created." }
+        flash[:notice] = "Account was successfully created"
+        format.html { render "create"}
         format.json { render :index, status: :created}
       else
         format.html { render :new, status: :unprocessable_entity }

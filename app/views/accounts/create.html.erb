@@ -1,0 +1,5 @@
+<%= turbo_frame_tag "new_account", class: "contents" do %>
+<%= turbo_stream.after "new_account" do %>
+    <%= render @account %>
+<% end %>
+<% end %>

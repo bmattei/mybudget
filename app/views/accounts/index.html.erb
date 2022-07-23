@@ -3,31 +3,19 @@
     <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
   <% end %>
 
-  <% content_for :title do %> Accounts <% end %>
+  <% content_for :title do %>
+    Accounts
+  <% end %>
   <div class="flex justify-between items-center">
     <h1 class="font-bold text-4xl">Accounts</h1>
   </div>
-  <div class='my-4'>
-    <%= link_to 'New account', new_account_path, class: "btn-primary" %>
+  <%= turbo_frame_tag "new_btn" do %>
+  <%= link_to 'New', new_account_path, data: {turbo_frame: "new_account"}, class: "btn-small text-right" %>
+<% end %>
+<%= render partial: "table", :locals => {accounts: @accounts, pagy: @pagy} %>
+<% content_for :right do %>
+  <div>
+    <%= render :partial => '/shared/filters', :locals => {model: Account} %>
   </div>
-  <div id="accounts" class="min-w-full">
-    <%= render :partial => '/shared/table', :locals => {records: @accounts, columns: ["bank", "name", "number", "has_checking"]} %>
-
-    <div id="pager" class="min-w-full my-8 flex justify-between">
-
-        <div>
-          <% if @pagy.prev %>
-            <%= link_to "< Previous page", url_for(params.merge(page: @pagy.prev)), class: "btn-primary" %>
-          <% end %>
-        </div>
-        <div class="text-right">
-          <% if @pagy.next %>
-            <%= link_to "Next page >", url_for(params.merge(page: @pagy.next)), class: "btn-primary" %>
-          <% end %>
-        </div>
-      </div>
-
-  </div>
-
-
+<% end %>
 </div>

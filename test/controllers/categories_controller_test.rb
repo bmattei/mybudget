@@ -20,7 +20,7 @@ class CategoriesControllerTest < ActionDispatch::IntegrationTest
       post categories_url, params: { category: { category_id: @category.id, name: "Gambling" } }
     end
 
-    assert_redirected_to categories_url
+    assert_response :success
   end
 
 
@@ -32,7 +32,8 @@ class CategoriesControllerTest < ActionDispatch::IntegrationTest
 
   test "should update category" do
     patch category_url(@category), params: { category: { category_id: @category.category_id, name: "new_name" } }
-    assert_redirected_to categories_url
+    assert_response :success
+    assert_equal "new_name", @category.reload.name
   end
 
   test "should destroy category" do

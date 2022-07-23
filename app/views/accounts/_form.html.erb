@@ -1,44 +1,33 @@
-<%= form_with(model: account, class: "contents",  data: { turbo_frame: "_top"}) do |form| %>
-  <% if account.errors.any? %>
-    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-lg mt-3">
-      <h2><%= pluralize(account.errors.count, "error") %> prohibited this account from being saved:</h2>
+<%=turbo_frame_tag dom_id(account), class: "contents" do %>
+<%= form_with(model: account, class: "table-row contents") do |form| %>
+<div class="table-cell">
+  <%= form.text_field :bank, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+</div>
+<div class="table-cell">
+  <%= form.text_field :name, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+</div>
 
-      <ul>
-        <% account.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+<div class="table-cell">
+  <%= form.text_field :number, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+</div>
 
-  <div class="my-5">
-    <%= form.label :name %>
-    <%= form.text_field :name, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
+<div class="table-cell">
+  <%= form.check_box :has_checking, class: "block mt-2 h-5 w-5" %>
+</div>
+<div class="table-cell">
+  <%= form.check_box :in_menu, class: "block mt-2 h-5 w-5" %>
+</div>
 
-  <div class="my-5">
-    <%= form.label :number %>
-    <%= form.text_field :number, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
-
-  <div class="my-5">
-    <%= form.label :bank %>
-    <%= form.text_field :bank, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
-
-  <div class="my-5">
-    <%= form.label :has_checking %>
-    <%= form.check_box :has_checking, class: "block mt-2 h-5 w-5" %>
-  </div>
-  <div class="my-5">
-    <%= form.label :show_in_menu %>
-    <%= form.check_box :in_menu, class: "block mt-2 h-5 w-5" %>
-  </div>
-
-  <div class="inline">
-    <%= form.submit class: "btn-small" %>
-  </div>
-  <div class="inline">
-    <%= link_to "Cancel", request.referrer, data: { turbo_frame: "_top"}, class: "btn-small" %>
-  </div>
+<div class="table-cell">
+  <%= form.submit "Save", class: "btn-small" %>
+</div>
+<div class="table-cell">
+  <%= link_to "Cancel", request.referrer, data: { turbo_frame: "_top"}, class: "btn-small" %>
+</div>
+<% end %>
+<%= turbo_stream.append "flash" do %>
+<% account.errors.each do |error| %>
+<li><%= error.full_message %></li>
+<% end %>
+<% end %>
 <% end %>

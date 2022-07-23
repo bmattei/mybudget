@@ -21,7 +21,7 @@ class AccountsControllerTest < ActionDispatch::IntegrationTest
          name: "New_Checking", number: "99990000000"} }
     end
 
-    assert_redirected_to accounts_url
+    assert_response :success
   end
 
   test "should show account" do
