@@ -262,7 +262,6 @@ class AccountsTest < ApplicationSystemTestCase
     fill_in "account_number", with: number
     click_on "Save"
     sleep 3
-    binding.break
     assert_text "Bank can't be blank"
 
   end
