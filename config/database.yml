@@ -82,5 +82,3 @@ test:
 production:
   <<: *default
   database: mybudget_production
-  username: mybudget
-  password: <%= ENV["MYBUDGET_DATABASE_PASSWORD"] %>

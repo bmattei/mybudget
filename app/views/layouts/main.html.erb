@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= yield :title %>
+    <title>
+      <%= "#{Rails.env[0..2].upcase}: #{request.env['PATH_INFO'].gsub(/[\d\/]/,"").upcase}" %>
     </title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1.2">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
@@ -23,24 +24,23 @@
         </nav>
       </div>
     </header>
-    <div class="container mx-auto">
-      <div class="flex flex-row flex-wrap py-4">
+    <div class="mx-auto">
+      <div class="py-4">
 
         <turbo-frame id="flash">
           <%= render 'shared/flash' %>
         </turbo-frame>
-        <main role="main" class="w-full  pt-1 px-2 ml-10">
-          <div class="flex flex-row">
+        <main role="main" class="pt-1 px-2 ml-10">
 
-            <div class="  basis-3/4">
+            <div class="basis-full flex">
               <%= yield %>
               <%= turbo_frame_tag "modal" %>
+              <div class="mx-10 my-10 max-w-fit">
+                <%= yield :right %>
+              </div>
             </div>
 
-            <div class="mx-10 my-10">
-              <%= yield :right %>
-            </div>
-          </div>
+
 
         </main>
       </div>
