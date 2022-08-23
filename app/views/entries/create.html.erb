@@ -1,0 +1,5 @@
+<%= turbo_frame_tag "new_entry", class: "contents" do %>
+<%= turbo_stream.after "new_entry" do %>
+    <%= render @entry %>
+<% end %>
+<% end %>

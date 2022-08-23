@@ -34,6 +34,6 @@
 <div class="table-cell">
  <%= link_to 'Delete', entry_path(entry), method: :delete,  data: {turbo_frame: "_top",  turbo_method: :delete, turbo_confirm: "Are you sure?"}, class: "btn-small" %>
 </div>
-<%#= render partial: "shared/flash" %>
+<%= render partial: "shared/flash" %>
 
 <% end %>
