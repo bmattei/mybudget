@@ -24,10 +24,6 @@
 <div class="table-cell">
   <%= link_to "Cancel", request.referrer, data: { turbo_frame: "_top"}, class: "btn-small" %>
 </div>
-<% end %>
-<%= turbo_stream.append "flash" do %>
-<% account.errors.each do |error| %>
-<li><%= error.full_message %></li>
-<% end %>
-<% end %>
+<% end %> <!-- form_with -->
+<%= render partial: "shared/errors", locals: {errors: account.errors}%>
 <% end %>

@@ -90,6 +90,22 @@ class AccountsTest < ApplicationSystemTestCase
     click_on "Save"
     assert_text "Amount can't be blank"
   end
+
+  test "Issue #12 insure entry form after error appears on page correctly" do
+    visit account_url(@account)
+    click_on "New", match: :first
+    payee = "ODD NAME Restaurant"
+    select categories(:restaurants).name, from: "entry[category_id]"
+    fill_in "entry_entry_date", with: Date.today
+    fill_in "entry_payee", with: payee
+    click_on "Save"
+    assert_text "Amount can't be blank"
+
+    # verify page is not missing elements
+    assert_text @account.name
+    assert_text "Date Range"
+    assert_text "Memo"
+  end
   # Theses tests were moved from entry test to here
   test "should update Entry" do
     visit account_url(@entry.account)
@@ -159,7 +175,7 @@ class AccountsTest < ApplicationSystemTestCase
   test "Should create transfer out entry with correct outflow" do
     other_account = accounts(:discover)
     init_account = accounts(:dcu_checking)
-    amount = 400
+    amount = 409.99
     visit account_url(init_account)
 
     click_on "New", match: :first
@@ -167,7 +183,6 @@ class AccountsTest < ApplicationSystemTestCase
     select  other_account.name, from: "entry_transfer_account_id"
     fill_in "entry_outflow", with: amount
     click_on "Save"
-
     assert_text "Entry was successfully created", wait: 5
     first_entry = all(".table-row-group>.table-row").first
     outflow = first_entry.all(".table-cell")[OUTFLOW_COL].text

@@ -27,14 +27,12 @@
     <div class="mx-auto">
       <div class="py-4">
 
-        <turbo-frame id="flash">
-          <%= render 'shared/flash' %>
-        </turbo-frame>
+        <div id="flash">
+        </div>
         <main role="main" class="pt-1 px-2 ml-10">
 
             <div class="basis-full flex">
               <%= yield %>
-              <%= turbo_frame_tag "modal" %>
               <div class="mx-10 my-10 max-w-fit">
                 <%= yield :right %>
               </div>

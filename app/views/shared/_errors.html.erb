@@ -1,0 +1,17 @@
+
+
+<%= turbo_stream.append "flash" do %>
+
+    <% if errors.count > 0 %>
+      <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg">
+        Please, fix the following issues
+      </p>
+      <ul class="list-disc">
+      <% errors.each do |error| %>
+        <li class="py-2 px-3 mb-5 font-medium rounded-lg inline-block">
+          <%= error.full_message %>
+        </li>
+        <% end %> <!-- errors.each -->
+     </ul>
+    <% end %> <!-- errors.count -->
+<% end %> <!-- turbo_stream.append -->

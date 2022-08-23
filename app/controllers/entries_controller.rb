@@ -117,7 +117,8 @@ class EntriesController < ApplicationController
 
     respond_to do |format|
       if @entry.save
-        format.html { redirect_to account_url(@entry.account), notice: "Entry was successfully created." }
+        flash[:notice] = "Entry was successfully created"
+        format.html { render "create"}
         format.json { render :show, status: :created, location: @entry }
       else
         format.html { render :new, status: :unprocessable_entity }
