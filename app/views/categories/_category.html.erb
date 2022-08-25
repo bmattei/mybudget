@@ -1,4 +1,5 @@
  <%= turbo_frame_tag dom_id(category), class: "table-row even:bg-blue-100" do %>
+ <%= link_to edit_category_path(category), class: "contents" do %>
   <div class="table-cell overflow-y-scroll px-2 py-1" >
     <%= category.name %>
   </div>
@@ -8,12 +9,7 @@
   <div class="table-cell overflow-y-scroll px-2 py-1" >
     <%= category.super %>
   </div>
-  <div class="table-cell">
-    <%= link_to 'Show', url_for(category), data: {turbo_frame: "_top"}, class: "btn-small"%>
-  </div>
-  <div class="table-cell">
-    <%= link_to 'Edit', url_for([:edit, category]), class: "btn-small"%>
-  </div>
+  <% end %>
   <div class="table-cell">
    <%= link_to 'Delete', url_for(category), method: :delete,  data: {turbo_frame: "_top",  turbo_method: :delete, turbo_confirm: "Are you sure?"}, class: "btn-small" %>
   </div>

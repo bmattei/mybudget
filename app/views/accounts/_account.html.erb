@@ -1,5 +1,6 @@
 <%= turbo_frame_tag dom_id(account), class: "table-row even:bg-blue-100" do %>
 
+<%= link_to edit_account_path(account), class: "contents" do %>
   <div class="table-cell overflow-y-scroll px-2 py-1" >
     <%= account.bank %>
   </div>
@@ -16,12 +17,11 @@
   <div class="table-cell overflow-y-scroll px-2 py-1" >
     <%= account.in_menu %>
   </div>
+<% end %>
   <div class="table-cell">
     <%= link_to 'Show', url_for(account), data: {turbo_frame: "_top"}, class: "btn-small"%>
   </div>
-  <div class="table-cell">
-    <%= link_to 'Edit', url_for([:edit, account]), class: "btn-small"%>
-  </div>
+
   <div class="table-cell">
    <%= link_to 'Delete', url_for(account), method: :delete,  data: {turbo_frame: "_top",  turbo_method: :delete, turbo_confirm: "Are you sure?"}, class: "btn-small" %>
   </div>
