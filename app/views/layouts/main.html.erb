@@ -13,15 +13,14 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="bg-slate-100">
+  <body class="bg-slate-100 ml-10">
     <header>
-      <div class="container mx-auto">
-        <nav>
-          <ul class="nav navbar-nav navbar-right flex">
+      <div class="">
+
             <%= render "shared/top_menu" %>
 
-          </ul>
-        </nav>
+
+
       </div>
     </header>
     <div class="mx-auto">
@@ -29,7 +28,7 @@
 
         <div id="flash">
         </div>
-        <main role="main" class="pt-1 px-2 ml-10">
+        <main role="main" class="pt-1 ">
 
             <div class="basis-full flex">
               <%= yield %>

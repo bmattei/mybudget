@@ -2,7 +2,7 @@
   <div class="table-header-group">
     <div class="table-row bg-blue-100">
       <% display_columns.each do |column_info| %>
-        <div class="table-cell px-2 py-4 test-left font-bold inline">
+        <div class="table-cell px-2 py-4 text-left font-bold inline">
             <%= sort_indicator if params[:column] == column_info[:column] %>
             <%= sort_link(column_info[:label].titleize, column_info[:column]) %>
        </div>
