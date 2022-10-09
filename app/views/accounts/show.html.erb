@@ -5,10 +5,6 @@
     <%= @account.name %>
   <% end %>
 
-  <div class="flex justify-between items-center">
-    <h1 class="font-bold text-4xl"><%= @account.name %></h1>
-  </div>
-
   <div class='my-4'>
     <%= link_to 'New', new_entry_path(account_id: @account), data: {turbo_frame: "new_entry", account:@account}, class: "btn-primary" %>
   </div>

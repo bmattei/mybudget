@@ -1,15 +1,15 @@
   <div class="table table-auto w-full">
     <div class="table-header-group">
       <div class="table-row bg-blue-100">
-        <div class="table-cell px-2 py-4 test-left font-bold inline">
+        <div class="table-cell px-2 py-4 text-left font-bold inline">
           <%= sort_indicator if params[:column] == "name" %>
           <%= sort_link("Name", "name") %>
         </div>
-        <div class="table-cell px-2 py-4 test-left font-bold inline">
+        <div class="table-cell px-2 py-4 text-left font-bold inline">
           <%= sort_indicator if params[:column] == "active" %>
           <%= sort_link("Active", "active") %>
         </div>
-        <div class="table-cell px-2 py-4 test-left font-bold inline">
+        <div class="table-cell px-2 py-4 text-left font-bold inline">
           <%= sort_indicator if params[:column] == "categories_categories.name" %>
           <%= sort_link("Super", "categories_categories.name") %>
         </div>

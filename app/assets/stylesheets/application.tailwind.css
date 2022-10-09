@@ -6,32 +6,19 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-blue-500 hover:bg-blue-700 flex-nowrap text-white font-bold py-2 px-4 border border-blue-700 rounded
+    @apply bg-blue-500 hover:bg-blue-700 flex-nowrap text-white font-bold py-2 px-4 border border-blue-700  border-2 rounded
   }
   .btn-small {
-    @apply bg-blue-500 hover:bg-blue-700 flex-nowrap text-white font-bold text-center py-1 px-3 border border-blue-700 rounded
+    @apply bg-blue-500 hover:bg-blue-700 flex-nowrap text-white font-bold text-center py-1 px-2 border border-blue-700 rounded text-sm
   }
   .basic-field {
     @apply block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full
   }
+  .sort-asc {
+    @apply relative top-5 left-24 h-12 w-12 border-x-8 border-x-transparent border-b-8 border-blue-600
+  }
+  .sort-desc {
+    @apply relative top-5 left-24 h-12 w-12 border-x-8 border-x-transparent border-t-8 border-blue-600
+  }
+
 }
-
-
-
-.sort {
- position: relative;
- top:  1.2rem;
- left: 6.6rem;
- width: 0;
- height: 0;
- border-left: 6px solid transparent;
- border-right: 6px solid transparent;
- }
-
- .sort-desc {
- border-top: 8px solid #0000ff;
- }
-
- .sort-asc {
- border-bottom: 8px solid #0000ff;
- }

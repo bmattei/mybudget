@@ -1,8 +1,22 @@
-<%= link_to "Accounts", Account, class: "btn-primary" %>
-<%= link_to "Categories", Category, class: "btn-primary" %>
-<%= link_to "Reporting", "/reporting", class: "btn-primary" %>
+<div class="mt-4">
+  <nav>
 
+    <div data-controller="menu" class="dropdown relative px-4 cursor-pointer">
+      <div data-action="click->menu#toggle" class="md:hidden">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 5.25h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5"/>
+        </svg>
+      </div>
+      <ul class="block flex flex-col gap-x-1 gap-y-1 w-max hidden md:flex-row md:block" data-menu-target="toggleable">
+        <%= link_to "Accounts", Account, class: "btn-small md:btn-primary" %>
+        <%= link_to "Categories", Category, class: "btn-small md:btn-primary" %>
+        <%= link_to "Reporting", "/reporting", class: "btn-small md:btn-primary" %>
 
-<% Account.where(in_menu: true).each do |account| %>
- <%= link_to account.name, account, class:"btn-primary" %>
-<% end %>
+        <% Account.where(in_menu: true).each do |account| %>
+          <%= link_to account.name, account, class:"btn-small md:btn-primary" %>
+        <% end %>
+      </ul>
+    </div>
+
+  </nav>
+</div>

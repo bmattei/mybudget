@@ -6,9 +6,7 @@
   <% content_for :title do %>
     Accounts
   <% end %>
-  <div class="flex justify-between items-center">
-    <h1 class="font-bold text-4xl">Accounts</h1>
-  </div>
+
   <%= turbo_frame_tag "new_btn" do %>
   <%= link_to 'New', new_account_path, data: {turbo_frame: "new_account"}, class: "btn-small text-right" %>
 <% end %>

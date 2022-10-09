@@ -6,6 +6,7 @@ module ApplicationHelper
     params.permit!
 
     if column == params[:column]
+      sort_indicator(label) +
       link_to(label, url_for(params.merge({ column: column, direction: next_direction })))
       # link_to(label, send(path_helper, params.merge({ column: column, direction: next_direction })))
     else
@@ -18,8 +19,17 @@ module ApplicationHelper
     params[:direction] == 'asc' ? 'desc' : 'asc'
   end
 
-  def sort_indicator
-    tag.div(class: "sort sort-#{params[:direction]}")
+  def sort_indicator(label)
+    class_str = "relative top-5 object-right h-0 w-0 border-x-8 border-x-transparent border-blue-600"
+
+    if next_direction == 'asc'
+      class_str += " border-b-8"
+    else
+      class_str += " border-t-8"
+    end
+
+      tag.div(class: class_str)
+
   end
 
 
