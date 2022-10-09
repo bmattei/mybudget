@@ -1,16 +1,14 @@
-<div class="table table-auto w-full">
+<div class="table table-auto md:table-fixed w-full">
   <div class="table-header-group">
     <div class="table-row bg-blue-100">
       <% display_columns.each do |column_info| %>
-        <div class="table-cell px-2 py-4 text-left font-bold inline">
+        <div class="table-cell px-1 py-2 md:px-2 md:py-4 text-left font-bold inline">
           <%= sort_link(column_info[:label].titleize, column_info[:column]) %>
        </div>
       <% end %>
-      <% if !defined?(allow_edit) || allow_edit %>
-      <div class="table-cell px-2 py-4 text-transparent">EDIT</div>
-      <% end %>
+
       <% if !defined?(allow_delete) || allow_delete %>
-      <div class="table-cell px-2 py-4 text-transparent">DELETE</div>
+      <div class="table-cell x-1 py-2 md:px-2 md:py-4  text-transparent">DELETE</div>
       <% end %>
 
     </div>
