@@ -20,7 +20,7 @@ module ApplicationHelper
   end
 
   def sort_indicator(label)
-    class_str = "relative top-5 object-right h-0 w-0 border-x-8 border-x-transparent border-blue-600"
+    class_str = "float-right relative top-5 object-right h-0 w-0 border-x-8 border-x-transparent border-blue-600"
 
     if next_direction == 'asc'
       class_str += " border-b-8"
