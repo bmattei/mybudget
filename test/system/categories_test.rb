@@ -48,44 +48,34 @@ class CategoriesTest < ApplicationSystemTestCase
     click_on "Save"
     assert_text "Category was successfully created"
     first_row = find_all(".table-row-group .table-row").first
-    assert_equal "#{name} true #{categories(:transportation).name} Show Edit Delete", first_row.text
+    assert_match "#{name} true #{categories(:transportation).name}", first_row.text
   end
 
   test "should update 2nd level category" do
     visit categories_url
-    rows = find_all(".table-row")
     category = categories(:auto_gas)
-    gas_row = rows.detect {|r| r.text.include?(category.name) and r.text.include?(category.super)}
-    gas_row.click_on("Edit")
-    assert_equal category.name, find("#category_name").value
-    assert_equal category.super, find('#category_category_id > option[selected="selected"').text
-    name = "gasoline"
+    name_field = find("#category_#{category.id}")
+    new_name = "gasoline"
     new_cat = "misc"
-    fill_in "category[name]", with: name
-    select "misc", from: "category[category_id]"
+    name_field.click
+    name_field.fill_in(with: new_name)
+    select new_cat, from: "category[category_id]"
     click_on "Save"
-
     assert_text "Category was successfully updated"
     assert current_url, categories
     assert_text "gasoline"
     rows = find_all(".table-row")
-    updated_row = rows.detect {|r| r.text.include?(name) and r.text.include?(new_cat)}
+    updated_row = rows.detect {|r| r.text.include?(new_name) and r.text.include?(new_cat)}
     assert updated_row != nil
 
   end
   test "should update top level category" do
     visit categories_url
-    rows = find_all(".table-row-group .table-row")
     category = categories(:misc)
-    misc_row = rows.detect {|r| r.text.include?(category.name) }
-    misc_row.click_on("Edit")
-    find(:css, "#category_active").set(true)
-
-    assert_equal find("#category_name").value, category.name
-    assert_text "Category", count: 0
-    name = "miscellaneous"
-
-    fill_in  "category[name]", with: name
+    find("#category_#{category.id}").click
+    new_name = "miscellaneous"
+    fill_in  "category[name]", with: new_name
+    find("#category_active").click
     click_on "Save"
 
     assert_text "Category was successfully updated"

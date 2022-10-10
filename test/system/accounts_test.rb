@@ -108,17 +108,22 @@ class AccountsTest < ApplicationSystemTestCase
   end
   # Theses tests were moved from entry test to here
   test "should update Entry" do
-    visit account_url(@entry.account)
-    click_on "Edit", match: :first
-    fill_in "Outflow", with: @entry.amount.abs
+    visit account_url(accounts(:dcu_checking))
+    assert_text "Date Range"
+    find_all(".table-row")[1].click
+    amount = 91982.32
+    check_number = 789
+    entry_date = Date.today - 40;
+    payee = "Tom Kohler"
+    fill_in "entry[outflow]", with: amount
     select categories(:transportation).name, from: "entry_category_id"
-    fill_in "entry_check_number", with: @entry.check_number
-    fill_in "entry_entry_date", with: @entry.entry_date
-    fill_in "entry_payee", with: @entry.payee
+    fill_in "entry_check_number", with: check_number
+    fill_in "entry_entry_date", with: entry_date
+    fill_in "entry_payee", with: payee
     click_on "Save"
 
     assert_text "Entry was successfully updated"
-    assert_equal account_url(@entry.account), current_url
+    assert_equal account_url(accounts(:dcu_checking)), current_url
   end
 
 
@@ -256,7 +261,8 @@ class AccountsTest < ApplicationSystemTestCase
 
   test "visiting the index" do
     visit accounts_url
-    assert_selector "h1", text: "Accounts"
+    
+    assert_selector "div", text: "Accounts"
     assert_text "Name"
     assert_text "Number"
     assert_text "Bank"
@@ -282,9 +288,10 @@ class AccountsTest < ApplicationSystemTestCase
   end
 
   test "Should be able to edit an account" do
+
     visit accounts_url
     assert_text "Accounts", wait: 5
-    find(".table-row-group").click_on "Edit", match: :first
+    find_all(".table-row")[1].click
     assert has_css?("#account_bank")
     old_name = find_field('account_name').value
     name = "NewAccountName909"
@@ -377,19 +384,19 @@ class AccountsTest < ApplicationSystemTestCase
     click_on "Name"
     sleep(2)
     rows = all(".table-row-group .table-row")
-    last_name = rows.first.find( ".table-cell:nth-child(2)").text
+    last_name = rows.first.find_all( ".table-cell")[1].text
 
     (1...rows.count).each do |i|
-         name =  rows[i].find( ".table-cell:nth-child(2)").text
+         name =  rows[i].find_all( ".table-cell")[1].text
          assert name>= last_name, "#{name} >= #{last_name}"
     end
     click_on "Name"
     # I think I need this because of turbo
     sleep(3)
     rows = all(".table-row-group .table-row")
-    last_name = rows.first.find( ".table-cell:nth-child(2)").text
+    last_name = rows.first.find_all( ".table-cell")[1].text
     (1...rows.count).each do |i|
-        name =  rows[i].find( ".table-cell:nth-child(2)").text
+        name =  rows[i].find_all( ".table-cell")[1].text
         assert name <= last_name, "#{name} <= #{last_name}"
     end
 
@@ -398,19 +405,20 @@ class AccountsTest < ApplicationSystemTestCase
     visit accounts_url
     click_on "Number"
     assert_text "New"
+
     rows = all(".table-row-group .table-row")
-    last_number = rows.first.find( ".table-cell:nth-child(3)").text
+    last_number = rows.first.find_all(".table-cell")[2].text
     (1...rows.count).each do |i|
-         number =  rows[i].find( ".table-cell:nth-child(3)").text
+         number =  rows.first.find_all(".table-cell")[2].text
          assert number>= last_number, "#{number} >= #{last_number}"
     end
     click_on "Number"
     # I think I need this because of turbo
     assert_text "New"
     rows = all(".table-row-group .table-row")
-    last_number = rows.first.find( ".table-cell:nth-child(3)").text
+    last_number = rows.first.find_all(".table-cell")[2].text
     (1...rows.count).each do |i|
-        number = rows[i].find( ".table-cell:nth-child(3)").text
+        number = rows.first.find_all(".table-cell")[2].text
         assert number <= last_number, "#{number} <= #{last_number}"
     end
 
@@ -754,7 +762,8 @@ class AccountsTest < ApplicationSystemTestCase
     # will still show categry even if it is inactive
     Category.all.each {|x| x.active = false; x.save}
     first_category = all(".table-row-group>.table-row").first.text.split.first
-    click_on "Edit", match: :first
+    find_all(".table-row")[1].click
+
     assert_text "Cancel"
     assert_text first_category
 
@@ -765,7 +774,8 @@ class AccountsTest < ApplicationSystemTestCase
     visit account_url({id:@account.id,
       date_after: filter_date_after,
       date_before: filter_date_before})
-    click_on 'Edit', match: :first
+    find_all(".table-row")[1].click
+
     assert_text 'Cancel'
     payee = "Change Payee $$$"
     find("#entry_payee").fill_in(with: payee)

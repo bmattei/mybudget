@@ -2,23 +2,18 @@
   <div class="table-header-group">
     <div class="table-row bg-blue-100">
       <div class="table-cell px-2 py-4 text-left font-bold inline">
-        <%= sort_indicator if params[:column] == "bank" %>
         <%= sort_link("Bank", "bank") %>
       </div>
       <div class="table-cell px-2 py-4 text-left font-bold inline">
-        <%= sort_indicator if params[:column] == "name" %>
         <%= sort_link("Name", "name") %>
       </div>
       <div class="table-cell px-2 py-4 text-left font-bold inline">
-        <%= sort_indicator if params[:column] == "number" %>
         <%= sort_link("Number", "number") %>
       </div>
       <div class="table-cell px-2 py-4 text-left font-bold inline">
-        <%= sort_indicator if params[:column] == "has_checking" %>
         <%= sort_link("Checking", "has_checking") %>
       </div>
       <div class="table-cell px-2 py-4 text-left font-bold inline">
-        <%= sort_indicator if params[:column] == "in_menu" %>
         <%= sort_link("In Menu", "in_menu") %>
       </div>
 

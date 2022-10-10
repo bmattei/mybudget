@@ -24,7 +24,6 @@ class EntriesControllerTest < ActionDispatch::IntegrationTest
                         payee: "Amazon"} }
     end
 
-    assert_redirected_to account_url(accounts(:dcu_checking))
   end
 
 
@@ -73,7 +72,6 @@ class EntriesControllerTest < ActionDispatch::IntegrationTest
 
     to_e = to_a.entries.last
     from_e = from_a.entries.last
-    assert_redirected_to account_url(accounts(:dcu_checking))
     assert_equal (-amount), from_e.amount
     assert_equal (amount), to_e.amount
     assert_equal entry_date, to_e.entry_date
