@@ -1,7 +1,7 @@
 <% if model.filter_scopes.count > 0  %>
   <div class="bg-blue-100 shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col my-2">
-    <div class="-mx-3 md:flex mb-6">
-      <div class="px-3 mb-6 md:mb-0">
+    <div class="-mx-3 lg:flex mb-6">
+      <div class="px-3 mb-6 lg:mb-0">
         <%= form_with action: :index, method: :get do |form| %>
         <% model.filter_scopes.each do |filter| %>
           <div class="my-5">

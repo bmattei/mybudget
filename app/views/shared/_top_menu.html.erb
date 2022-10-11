@@ -1,22 +1,40 @@
 <div class="mt-4">
   <nav>
+    <div class="flex gap-6">
 
     <div data-controller="menu" class="dropdown relative px-4 cursor-pointer">
-      <div data-action="click->menu#toggle" class="md:hidden">
+      <div data-action="click->menu#toggle" class="lg:hidden">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
           <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 5.25h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5"/>
         </svg>
       </div>
-      <ul class="absolute flex flex-col gap-x-1 gap-y-1 hidden  z-40 bg-white rounded px-2 py-1 md:static md:flex md:flex-row md:flex-nowrap md:block md:bg-inherit" data-menu-target="toggleable">
-        <%= link_to "Accounts", Account, class: "border-b text-blue-700 font-bold md:btn-primary" %>
-        <%= link_to "Categories", Category, class: "border-b text-blue-700 font-bold md:btn-primary" %>
-        <%= link_to "Reporting", "/reporting", class: "border-b text-blue-700 font-bold md:btn-primary" %>
+      <ul class="absolute flex flex-col gap-x-1 gap-y-1 hidden  z-40 bg-white rounded px-2 py-1 lg:static lg:flex lg:flex-row lg:flex-nowrap lg:block lg:bg-inherit" data-menu-target="toggleable">
+        <%= link_to "Accounts", Account, class: "border-b text-blue-700 font-bold lg:btn-primary" %>
+        <%= link_to "Categories", Category, class: "border-b text-blue-700 font-bold lg:btn-primary" %>
+        <%= link_to "Reporting", "/reporting", class: "border-b text-blue-700 font-bold lg:btn-primary" %>
 
         <% Account.where(in_menu: true).each do |account| %>
-          <%= link_to account.name, account, class:"border-b text-blue-700 font-bold md:btn-primary" %>
+          <%= link_to account.name, account, class:"border-b text-blue-700 font-bold lg:btn-primary" %>
         <% end %>
       </ul>
     </div>
+    <div data-controller="menu" class="dropdown relative px-4 cursor-pointer">
+      <div data-action="click->menu#toggle" class="lg:hidden">
+        <div data-controller="menu" class="dropdown relative px-4 cursor-pointer">
+          <div data-action="click->menu#toggle" class="lg:hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z" />
+            </svg>
+
+          </div>
+          <div class="hidden absolute  z-40 min-w-fit" data-menu-target="toggleable">
+            <%= yield :right %>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
 
   </nav>
 </div>
