@@ -12,7 +12,9 @@
   </head>
 
   <body>
-    <main class="container mx-auto mt-28 px-5 flex">
+  <%= turbo_frame_tag "modal" %>
+
+  <main class="container mx-auto mt-28 px-5 flex">
       <%= yield %>
     </main>
   </body>
