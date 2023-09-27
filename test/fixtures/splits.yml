@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+split_one:
+  entry: discover_split
+  category: groceries
+  amount: 50.00
+
+split_two:
+  entry: discover_split
+  category: auto_gas
+  amount: 30.00
