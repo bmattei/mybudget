@@ -1,4 +1,16 @@
 class Entry < ApplicationRecord
+  belongs_to :account
+  belongs_to :category, required: false
+  has_many :splits
+  accepts_nested_attributes_for :splits
+  has_one :transfer_entry, class_name: "Entry",
+          foreign_key: "transfer_entry_id"
+  belongs_to :transfer_entry, class_name: "Entry", optional: true,
+             foreign_key: "transfer_entry_id"
+
+  belongs_to :transfer_account, class_name: "Account", optional: true,
+             foreign_key: "transfer_account_id"
+  before_save :validate_splits_sum
   include Filterable
   filter_scope :category_is, Category.all, -> (category_id) {where(category_id: category_id)}
   filter_scope :payee_contains, :text, ->(str) {where("payee like ?", "%#{str}%")}
@@ -12,21 +24,13 @@ class Entry < ApplicationRecord
   filter_scope :check_before, :number, -> (num) {where("check_number <= ?", num)}
   scope        :normal_order, -> {order(entry_date: :desc).order(id: :desc)}
 
-  belongs_to :account
-  belongs_to :category, required: false
-  has_one :transfer_entry, class_name: "Entry",
-            foreign_key: "transfer_entry_id"
-  belongs_to :transfer_entry, class_name: "Entry", optional: true,
-             foreign_key: "transfer_entry_id"
 
-  belongs_to :transfer_account, class_name: "Account", optional: true,
-                        foreign_key: "transfer_account_id"
   validates :amount, presence: true
   validates :account, presence: true
   validates :entry_date, presence: true
-  validates :category, presence: true, unless: :transfer_account
-  validates :transfer_account, presence: true, unless: :category
+  validate :category_and_transfer_account_or_splits_present
 
+  
   # validate  :validate_transfer_or_category
   belongs_to :account
   after_update :clear_balances
@@ -109,10 +113,15 @@ private def manage_transfers
   end
 
   private
-  # def validate_transfer_or_category
-  #  unless category_id ^ transfer_entry_id
-  #    errors.add(:base, "must have a category if transaction is not a transfer")
-  #  end
-  # end
-
+  def validate_splits_sum
+    if splits.count > 0 && splits.sum(&:amount) != self.amount
+      errors.add(:base, "Split amounts don't match the entry amount")
+      throw :abort # This prevents the save operation
+    end
+  end
+  def category_and_transfer_account_or_splits_present
+    unless category || transfer_account || splits.exists?
+      errors.add(:base, 'Either category and transfer_account or splits should exist.')
+    end
+  end
 end

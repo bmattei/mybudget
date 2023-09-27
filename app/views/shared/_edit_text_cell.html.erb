@@ -1,0 +1,9 @@
+<div id=<%= "#{id}#{field}" %> class="table-cell overflow-y-scroll px-2 py-1"
+     data-controller="edit"
+     data-action="click->edit#editCell blur->edit#saveCell"
+     data-model="<%= model %>"
+     data-id="<%= id %>"
+     data-field="<%= field %>"
+     contenteditable="true">
+  <%= content %>
+</div>

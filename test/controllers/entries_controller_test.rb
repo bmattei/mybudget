@@ -1,6 +1,7 @@
 require "test_helper"
 
 class EntriesControllerTest < ActionDispatch::IntegrationTest
+  
   setup do
     @entry = entries(:dcu_checking_init)
   end

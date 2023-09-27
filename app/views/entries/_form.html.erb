@@ -12,7 +12,7 @@
 
   <div class="table-cell">
     <% if current_page?(action: :new) %>
-      <%= form.collection_select :category_id, Category.where(active:true).where.not(category_id: nil).order(:name),:id, :name , {include_blank: "Select Category"}, {data: {action: "change->entry#on_set_category"}, class: "basic-field"} %>
+      <%= form.collection_select :category_id, Category.where(active:true).where.not(parent_id: nil).order(:name),:id, :name , {include_blank: "Select Category"}, {data: {action: "change->entry#on_set_category"}, class: "basic-field"} %>
     <% else %>
       <%= form.collection_select :category_id, Category.order(:name),:id, :name , {include_blank: "Transfer"}, {data: {action: "change->entry#on_set_category"}, class: "basic-field"} %>
     <% end %>

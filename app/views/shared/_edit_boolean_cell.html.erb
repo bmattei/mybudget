@@ -1,0 +1,9 @@
+
+<div class="table-cell overflow-y-scroll px-2 py-1"
+     data-controller="edit"
+     data-action="change->edit#saveBooleanCell"
+     data-model="<%= model %>"
+     data-id="<%= id %>"
+     data-field="<%= field %>">
+  <%= check_box_tag nil, true, content, {class: "form-check-input", data: {action: "edit#editBooleanCell"}} %>
+</div>

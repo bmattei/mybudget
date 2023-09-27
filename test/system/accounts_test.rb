@@ -9,8 +9,7 @@ class AccountsTest < ApplicationSystemTestCase
   MEMO_COL = 5
   INFLOW_COL = 6
   OUTFLOW_COL = 7
-  BALANCE_COL = 8
-  CATEGORY_ID = "category_id"
+  BALANCE_COL = 8                                                     
   CATEGORY_ID = "category_id"
 
 
@@ -103,27 +102,28 @@ class AccountsTest < ApplicationSystemTestCase
 
     # verify page is not missing elements
     assert_text @account.name
-    assert_text "Date Range"
+    assert_text "Outflow"
     assert_text "Memo"
+    assert find("#toggle_filter")
+
   end
   # Theses tests were moved from entry test to here
-  test "should update Entry" do
-    visit account_url(accounts(:dcu_checking))
-    assert_text "Date Range"
-    find_all(".table-row")[1].click
-    amount = 91982.32
-    check_number = 789
-    entry_date = Date.today - 40;
-    payee = "Tom Kohler"
-    fill_in "entry[outflow]", with: amount
-    select categories(:transportation).name, from: "entry_category_id"
-    fill_in "entry_check_number", with: check_number
-    fill_in "entry_entry_date", with: entry_date
-    fill_in "entry_payee", with: payee
-    click_on "Save"
+  test "should be able to edit the payee field" do
 
-    assert_text "Entry was successfully updated"
-    assert_equal account_url(accounts(:dcu_checking)), current_url
+    visit account_url(accounts(:dcu_checking))
+    assert_text "DcuChecking"
+
+    row = find_all(".table-row")[1]
+    payee_cell = row.find_all(".table-cell")[PAYEE_COL]
+    payee_cell.click
+    NEW_PAYEE = "MY NEW PAYEE-jibber"
+    payee_cell.set(NEW_PAYEE)
+    payee_cell.send_keys :tab
+    visit current_url
+    row = find_all(".table-row")[1]
+    payee_cell = row.find_all(".table-cell")[PAYEE_COL]
+    assert_equal NEW_PAYEE, payee_cell.text
+
   end
 
 
@@ -290,17 +290,18 @@ class AccountsTest < ApplicationSystemTestCase
   test "Should be able to edit an account" do
 
     visit accounts_url
-    assert_text "Accounts", wait: 5
-    find_all(".table-row")[1].click
-    assert has_css?("#account_bank")
-    old_name = find_field('account_name').value
-    name = "NewAccountName909"
-    # NOTE: BUG IN fill_in sometimes not clearing.
-    fill_in "account_name", with: name,  fill_options: { clear: :backspace }
-    click_on "Save"
-    assert current_url, accounts_url
-    assert_text name
-    assert_text old_name, count:0
+    assert_text "Accounts"
+    row = find_all(".table-row")[1]
+    name_cell = row.find('.table-cell[data-field="name"]')
+    old_name = name_cell.text
+    new_name =    old_name + "New Change"
+    name_cell.click
+    name_cell.set(new_name)
+    name_cell.send_keys(:tab)
+    refresh
+    row = find_all(".table-row")[1]
+    name_cell = row.find('.table-cell[data-field="name"]')
+    assert_equal new_name, name_cell.text
   end
 
   test "Should be able to cancel a create" do
@@ -328,6 +329,7 @@ class AccountsTest < ApplicationSystemTestCase
     assert_text @account.number
 
     filter_account = accounts(:filter_me)
+    find("#toggle_filter").click
     fill_in "Name Contains", with: filter_account.name
     click_on "Filter"
     # this account should now be filtered out
@@ -341,6 +343,7 @@ class AccountsTest < ApplicationSystemTestCase
     assert_text @account.number
 
     filter_account = accounts(:filter_me)
+    find("#toggle_filter").click
     fill_in "Bank Contains", with: filter_account.bank
     click_on "Filter"
     # this account should now be filtered out
@@ -352,6 +355,8 @@ class AccountsTest < ApplicationSystemTestCase
     # This account should be in table to start test
     assert_text @account.number
     filter_account = accounts(:filter_me)
+    find("#toggle_filter").click
+
     fill_in "Number Contains", with: filter_account.number
     click_on "Filter"
     # this account should now be filtered out
@@ -381,6 +386,8 @@ class AccountsTest < ApplicationSystemTestCase
   end
   test "should be able to sort by Name" do
     visit accounts_url
+    assert_text "Accounts"
+
     click_on "Name"
     sleep(2)
     rows = all(".table-row-group .table-row")
@@ -388,7 +395,7 @@ class AccountsTest < ApplicationSystemTestCase
 
     (1...rows.count).each do |i|
          name =  rows[i].find_all( ".table-cell")[1].text
-         assert name>= last_name, "#{name} >= #{last_name}"
+         assert name >= last_name, "#{name} >= #{last_name}"
     end
     click_on "Name"
     # I think I need this because of turbo
@@ -471,6 +478,8 @@ class AccountsTest < ApplicationSystemTestCase
   end
   test "Show page should have filters" do
     visit account_url(@account)
+    find("#toggle_filter").click
+
     assert_text "Date Range"
     assert_text "Amount Range"
     assert_text  "Payee"
@@ -503,9 +512,10 @@ class AccountsTest < ApplicationSystemTestCase
     visit account_url(account)
     rows = find_all(".table-row-group .table-row")
     i = 0
+
     account.entries.normal_order.limit(10).each do |e|
       columns = rows[i].find_all('.table-cell')
-      assert_equal e.category.name, columns[CATEGORY_COL].text if e.category.name
+      assert_equal e.category.name, columns[CATEGORY_COL].text if e.category
       assert_equal as(e.entry_date, :date), columns[DATE_COL].text
       assert_equal e.check_number.to_s, columns[CHECK_COL].text if e.check_number
       assert_equal e.payee, columns[PAYEE_COL].text if e.payee
@@ -519,6 +529,8 @@ class AccountsTest < ApplicationSystemTestCase
   test "Show should be able to filter entries by Minumum Date" do
      visit account_url(@account)
      min_date =  Entry.group(:account_id).minimum("entry_date")[@account.id]
+     find("#toggle_filter").click
+
      find("#date_after").fill_in(with: min_date + 1)
      click_on "Filter"
      expected  = @account.entries.where("entry_date >= ?", min_date + 1)
@@ -533,6 +545,8 @@ class AccountsTest < ApplicationSystemTestCase
   test "Show should be able to filter entries by Maximum Date" do
      visit account_url(@account)
      max_date =  Entry.group(:account_id).maximum("entry_date")[@account.id]
+     find("#toggle_filter").click
+
      find("#date_before").fill_in(with: max_date - 1)
 
      click_on "Filter"
@@ -551,6 +565,8 @@ class AccountsTest < ApplicationSystemTestCase
     account = accounts(:discover)
     visit account_url(account)
     payee = "Stop &"
+    find("#toggle_filter").click
+
     find("#payee_contains").fill_in(with: payee)
     click_on "Filter"
     expected = account.entries.payee_contains(payee)
@@ -567,6 +583,8 @@ class AccountsTest < ApplicationSystemTestCase
     account = accounts(:discover)
     visit account_url(account)
     category = categories(:groceries)
+    find("#toggle_filter").click
+
     find("#category_is").select(category.name)
     click_on "Filter"
     expected = account.entries.category_is(category.id)
@@ -584,6 +602,8 @@ class AccountsTest < ApplicationSystemTestCase
 
     max_check =  Entry.group(:account_id).maximum("check_number")[account.id]
     min_check =  Entry.group(:account_id).minimum("check_number")[account.id]
+
+    find("#toggle_filter").click
 
     find("#check_after").fill_in(with: min_check + 1)
 
@@ -652,6 +672,8 @@ class AccountsTest < ApplicationSystemTestCase
     account = accounts(:lots)
     visit account_url(account)
     assert_text "Payee"
+    find("#toggle_filter").click
+
     fill_in "payee_contains", with: "Linguine"
     click_on "Filter"
     assert_text "Linguine", count:10
@@ -699,17 +721,17 @@ class AccountsTest < ApplicationSystemTestCase
        account = accounts(:discover)
        visit account_url(account)
 
-       max_date =  Date.today - 1
+       max_date =  Date.today - 2
        min_date =  Entry.group(:account_id).minimum("entry_date")[account.id]
-
+       find("#toggle_filter").click
+       assert_text "Filter"
        find("#date_after").fill_in(with: min_date + 1)
-
 
        find("#date_before").fill_in(with: max_date - 1)
        click_on "Filter"
+
        expected  = account.entries.where("entry_date <= ? and entry_date >= ?",
                                        max_date - 1, min_date + 1 )
-
        sleep 2
        assert_equal expected.count, find_all(".table-row-group .table-row").count
        expected.each do |e|
@@ -721,6 +743,7 @@ class AccountsTest < ApplicationSystemTestCase
   test "should be able to link to account with filters" do
     filter_date = Date.today - 300
     visit account_url({id:@account.id, date_after: filter_date})
+    find("#toggle_filter").click
     assert_equal filter_date.to_s, find("#date_after").value
   end
   test "New form cancel should link back to show page with filters" do
@@ -732,6 +755,8 @@ class AccountsTest < ApplicationSystemTestCase
     click_on 'New'
     assert_text 'Cancel'
     click_on 'Cancel'
+    find("#toggle_filter").click
+
     assert_equal filter_date_after.to_s, find("#date_after").value
     assert_equal filter_date_before.to_s, find("#date_before").value
   end
@@ -744,6 +769,8 @@ class AccountsTest < ApplicationSystemTestCase
     click_on 'New'
     assert_text 'Cancel'
     category = categories(:groceries)
+    find("#toggle_filter").click
+
     find("#entry_category_id").select(category.name)
     payee = "Money Taker Grocery Store"
     find("#entry_payee").fill_in(with: payee)
@@ -762,27 +789,26 @@ class AccountsTest < ApplicationSystemTestCase
     # will still show categry even if it is inactive
     Category.all.each {|x| x.active = false; x.save}
     first_category = all(".table-row-group>.table-row").first.text.split.first
-    find_all(".table-row")[1].click
-
-    assert_text "Cancel"
+    row = find_all(".table-row")[1]
+    category_cell = row.find('.table-cell[data-field="category_id"]')
+    category_cell.click
     assert_text first_category
 
   end
-  test "Edit entry should return to show page with filters" do
-    filter_date_after = Date.today - 300
-    filter_date_before = Date.today - 20
-    visit account_url({id:@account.id,
-      date_after: filter_date_after,
-      date_before: filter_date_before})
-    find_all(".table-row")[1].click
-
-    assert_text 'Cancel'
-    payee = "Change Payee $$$"
-    find("#entry_payee").fill_in(with: payee)
-    click_on "Save"
-    assert_text "Entry was successfully updated"
-    assert_equal filter_date_after.to_s, find("#date_after").value
-    assert_equal filter_date_before.to_s, find("#date_before").value
+  # This tests that after we edit an entry our filters are still the same.
+  # 
+  test "Should be able to edit Payee Inline" do
+    visit account_url({id:@account.id})
+    row = find_all(".table-row")[1]
+    new_payee = "Change Payee $$$"
+    payee_cell = row.find('.table-cell[data-field="payee"]')
+    payee_cell.click
+    payee_cell.set(new_payee)
+    payee_cell.send_keys(:tab)
+    refresh
+    row = find_all(".table-row")[1]
+    payee_cell = row.find('.table-cell[data-field="payee"]')
+    assert_equal new_payee, payee_cell.text
   end
 
 

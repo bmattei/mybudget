@@ -1,39 +1,42 @@
 <%= turbo_frame_tag dom_id(entry), class: "table-row even:bg-blue-100" do %>
+  <%= render 'shared/edit_boolean_cell', model: 'entry', id: entry.id, field: 'cleared', content: entry.cleared %>
+  <!-- I have work to do to handle transfers and splits -->
 
-<%= link_to edit_entry_path(entry), class: "contents" do %>
-<div class="table-cell overflow-y-scroll px-2 py-1" >
-    <%= entry.cleared %>
-</div>
-<div class="table-cell overflow-y-scroll px-2 py-1" >
+  <%= render 'shared/edit_reference_cell', model: 'entry', id: entry.id, field: 'category_id', content: entry.category_id, references: Category.all,
+             default_display: 'Transfer' %>
 
-    <%= entry.category_name || "Transfer"%>
-</div>
-<div class="table-cell overflow-y-scroll px-2 py-1" >
+  <div class="table-cell overflow-y-scroll px-2 py-1">
     <%= as(entry.entry_date, :date) %>
-</div>
-<div class="table-cell overflow-y-scroll px-2 py-1" >
+  </div>
+  <div class="table-cell overflow-y-scroll px-2 py-1">
     <%= entry.check_number %>
-</div>
-<div class="table-cell overflow-y-scroll px-2 py-1" >
-    <%= entry.transfer_account ? entry.transfer_account.name : entry.payee %>
-</div>
-<div class="table-cell overflow-y-scroll px-2 py-1" >
+  </div>
+  <!-- Need to make transfer_account editable -->
+  <% if entry.transfer_account %>
+    <div class="table-cell overflow-y-scroll px-2 py-1">
+      <%= entry.transfer_account %>
+    </div>
+  <% else %>
+    <%= render 'shared/edit_text_cell', model: 'entry', id: entry.id, field: 'payee', content: entry.payee %>
+  <% end %>
+
+  <div class="table-cell overflow-y-scroll px-2 py-1">
     <%= entry.memo %>
-</div>
-<div class="table-cell overflow-y-scroll px-2 py-1" >
+  </div>
+  <div class="table-cell overflow-y-scroll px-2 py-1">
     <%= as(entry.inflow, :money) %>
-</div>
-<div class="table-cell overflow-y-scroll px-2 py-1" >
+  </div>
+  <div class="table-cell overflow-y-scroll px-2 py-1">
     <%= as(entry.outflow, :money) %>
-</div>
-<div class="table-cell overflow-y-scroll px-2 py-1" >
+  </div>
+  <div class="table-cell overflow-y-scroll px-2 py-1">
     <%= as(entry.balance, :money) %>
-</div>
+  </div>
+
+  <div class="table-cell">
+    <%= link_to 'Delete', entry_path(entry), method: :delete, data: { turbo_frame: "_top", turbo_method: :delete, turbo_confirm: "Are you sure?" }, class: "btn-small" %>
+  </div>
 <% end %>
 
-<div class="table-cell">
- <%= link_to 'Delete', entry_path(entry), method: :delete,  data: {turbo_frame: "_top",  turbo_method: :delete, turbo_confirm: "Are you sure?"}, class: "btn-small" %>
-</div>
 <%= render partial: "shared/flash" %>
 
-<% end %>

@@ -1,7 +1,7 @@
 <%=turbo_frame_tag dom_id(account), class: "contents" do %>
 <%= form_with(model: account, class: "table-row contents") do |form| %>
 <div class="table-cell">
-  <%= form.text_field :bank, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>
+  <%= form.text_field :bank, class: "table-cell overflow-y-scroll px-2 py-1" %>
 </div>
 <div class="table-cell">
   <%= form.text_field :name, class: "block shadow rounded-md border border-gray-200 outline-none px-3 py-2 mt-2 w-full" %>

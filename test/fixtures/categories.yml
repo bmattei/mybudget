@@ -22,45 +22,45 @@ food:
 
 restaurants:
   name: restaurants
-  category: food
+  parent: food
   active: true
 
 groceries:
   name: groceries
-  category: food
+  parent: food
   active: true
 
 misc_income:
   name: misc_income
-  category: income
+  parent: income
   active: true
 
 salary:
   name: salary
-  category: income
+  parent: income
   active: true
 
 auto_gas:
   name: auto_gas
-  category: transportation
+  parent: transportation
   active: true
 
 auto_maintenance:
   name: auto_maintenance
-  category: transportation
+  parent: transportation
   active: true
 
 home_oil:
   name: home_oil
-  category: utilities
+  parent: utilities
   active: true
 
 home_electric:
   name: electric
-  category: utilities
+  parent: utilities
   active: true
 
 tires:
   name: tires
-  category: misc
+  parent: misc
   active: true

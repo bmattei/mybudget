@@ -3,10 +3,18 @@ class AccountsController < ApplicationController
   before_action :set_account, only: %i[ show edit update destroy ]
   helper_method :display_columns, :allow_edit, :allow_show, :allow_delete
 
+
   # GET /accounts or /accounts.json
   def index
-    @pagy ,@accounts = pagy(Account.filter_by(filtering_params).order("#{params[:column]} #{params[:direction]}"),
-                        items: 10)
+    if !params[:column]
+      @pagy ,@accounts = pagy(Account.filter_by(filtering_params).order(bank: :asc, name: :asc),
+                              items: 10)
+    else
+      @pagy ,@accounts = pagy(Account.filter_by(filtering_params).order("#{params[:column]} #{params[:direction]}"),
+                              items: 10)
+    end
+
+
   end
 
   # GET /accounts/1 or /accounts/1.json
@@ -30,6 +38,7 @@ class AccountsController < ApplicationController
 
   # GET /accounts/1/edit
   def edit
+    
   end
 
   # POST /accounts or /accounts.json
@@ -49,11 +58,14 @@ class AccountsController < ApplicationController
 
   # PATCH/PUT /accounts/1 or /accounts/1.json
   def update
+    puts "\n++++++++++++++++++++++++++++++++++++++Enter update #{account_params}\n"
     respond_to do |format|
       if @account.update(account_params)
+        puts "\n+++++++++++++++++++++UPDATE success "
         format.html { redirect_to accounts_url, notice: "Account was successfully updated." }
         format.json { render :index, status: :ok }
-      else
+      else      
+        puts "\n+++++++++++++++++++++UPDATE ERROR "
         format.html { render :edit, status: :unprocessable_entity }
         format.json { render json: @account.errors, status: :unprocessable_entity }
       end
@@ -102,6 +114,7 @@ class AccountsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def account_params
+      puts "+++++++++++++++++++++++++enter account params: #{params}\n"
       params.require(:account).permit(:name, :number, :bank, :has_checking, :in_menu)
     end
 end

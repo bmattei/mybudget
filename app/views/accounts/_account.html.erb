@@ -1,23 +1,12 @@
 <%= turbo_frame_tag dom_id(account), class: "table-row even:bg-blue-100" do %>
 
-<%= link_to edit_account_path(account), class: "contents" do %>
-  <div class="table-cell overflow-y-scroll px-2 py-1" >
-    <%= account.bank %>
-  </div>
+  <%= render 'shared/edit_text_cell', model: 'account', id: account.id, field: 'bank', content: account.bank %>
+  <%= render 'shared/edit_text_cell', model: 'account', id: account.id, field: 'name', content: account.name %>
+  <%= render 'shared/edit_text_cell', model: 'account', id: account.id, field: 'number', content: account.number %>
+  <%= render 'shared/edit_boolean_cell', model: 'account', id: account.id, field: 'has_checking', content: account.has_checking %>
+  <%= render 'shared/edit_boolean_cell', model: 'account', id: account.id, field: 'in_menu', content: account.in_menu %>
 
-  <div class="table-cell overflow-y-scroll px-2 py-1" >
-    <%= account.name %>
-  </div>
-  <div class="table-cell overflow-y-scroll px-2 py-1" >
-    <%= account.number %>
-  </div>
-  <div class="table-cell overflow-y-scroll px-2 py-1" >
-    <%= account.has_checking %>
-  </div>
-  <div class="table-cell overflow-y-scroll px-2 py-1" >
-    <%= account.in_menu %>
-  </div>
-<% end %>
+
   <div class="table-cell">
     <%= link_to 'Show', url_for(account), data: {turbo_frame: "_top"}, class: "btn-small"%>
   </div>

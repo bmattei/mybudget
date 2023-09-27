@@ -23,6 +23,7 @@ class EntryTest < ActiveSupport::TestCase
                          amount: amount,
                          entry_date: entry_date)
     assert_not_nil entry
+    assert entry.save
     assert_equal 4990.to_f, entry.balance.to_f
     assert_equal  4890.to_f, entries(:dcu_checking_buy_gas_1).balance.to_f
     assert_equal 4790.to_f,entries(:dcu_checking_buy_gas_2).balance.to_f
@@ -200,6 +201,20 @@ class EntryTest < ActiveSupport::TestCase
       assert_equal calc_balance.to_f, e.balance.to_f
     end
 
+  end
+  test "should save entry with valid splits" do
+    entry = entries(:discover_split)
+    entry.splits.build(category: categories(:tires), amount: 20.00)
+    assert entry.valid?
+    assert entry.save, "Failed to save entry with valid splits"
+  end
+
+  test "should not save entry with mismatched split amounts" do
+    entry = entries(:discover_split)
+    entry.splits.build(category: categories(:tires), amount: 25.00) # This will result in a total of 105, not matching the entry's 100
+
+    assert_not entry.save, "Saved an entry with mismatched split amounts"
+    assert_includes entry.errors.full_messages, "Split amounts don't match the entry amount"
   end
 
 

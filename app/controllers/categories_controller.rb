@@ -4,7 +4,7 @@ class CategoriesController < ApplicationController
   helper_method :display_columns, :allow_edit, :allow_delete, :allow_show
 
   def index
-    @pagy, @categories = pagy(Category.order(active: :desc).order(:name).left_outer_joins(:category).filter_by(filtering_params).order("#{params[:column]} #{params[:direction]}"),
+    @pagy, @categories = pagy(Category.order(active: :desc).order(:name).left_outer_joins(:parent).filter_by(filtering_params).order("#{params[:column]} #{params[:direction]}"),
                        items: 10)
     @allow_delete = false
     @allow_edit = false
@@ -97,7 +97,7 @@ class CategoriesController < ApplicationController
         @referrer = params[:category][:referrer]
         params[:category].delete(:referrer)
       end
-      cat_params = params.require(:category).permit(:name, :active, :category_id)
+      cat_params = params.require(:category).permit(:name, :active, :parent_id)
       return cat_params
     end
 end

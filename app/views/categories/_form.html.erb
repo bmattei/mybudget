@@ -7,8 +7,8 @@
       <%= form.check_box :active, class: "" %>
     </div>
     <div class="table-cell">
-      <% if category.categories.count == 0 %>
-        <%= form.collection_select :category_id, Category.order(:name).where(category_id: nil).where.not(id: category.id),:id, :name ,{include_blank: "Select Category"} %>
+      <% if category.sub_categories.count == 0 %>
+        <%= form.collection_select :parent_id, Category.order(:name).where(parent_id: nil).where.not(id: category.id),:id, :name ,{include_blank: "Select Category"} %>
       <% end %>
     </div>
     <div class="table-cell">

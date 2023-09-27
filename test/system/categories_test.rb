@@ -23,7 +23,7 @@ class CategoriesTest < ApplicationSystemTestCase
     name = "AAA"
     fill_in "category[name]", with: name
     find(:css, "#category_active").set(true)
-    select categories(:transportation).name, from: "category[category_id]"
+    select categories(:transportation).name, from: "category[parent_id]"
     click_on "Save"
     assert_text "Category was successfully created"
     assert current_url, categories_url
@@ -33,7 +33,7 @@ class CategoriesTest < ApplicationSystemTestCase
     visit categories_url
     click_on "New"
     find(:css, "#category_active").set(true)
-    select categories(:transportation).name, from: "category[category_id]"
+    select categories(:transportation).name, from: "category[parent_id]"
     click_on "Save"
     assert_text "Name can't be blank"
     assert current_url, categories_url
@@ -44,7 +44,7 @@ class CategoriesTest < ApplicationSystemTestCase
     name = "AAA"
     fill_in "category[name]", with: name
     find(:css, "#category_active").set(true)
-    select categories(:transportation).name, from: "category[category_id]"
+    select categories(:transportation).name, from: "category[parent_id]"
     click_on "Save"
     assert_text "Category was successfully created"
     first_row = find_all(".table-row-group .table-row").first
@@ -59,7 +59,7 @@ class CategoriesTest < ApplicationSystemTestCase
     new_cat = "misc"
     name_field.click
     name_field.fill_in(with: new_name)
-    select new_cat, from: "category[category_id]"
+    select new_cat, from: "category[parent_id]"
     click_on "Save"
     assert_text "Category was successfully updated"
     assert current_url, categories

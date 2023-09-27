@@ -168,3 +168,9 @@ discover_<%= n %>:
   memo: <%= "discover eat out #{n}" %>
 
 <% end %>
+
+discover_split:
+  account: discover
+  payee: "Test Payee"
+  amount: 100
+  entry_date: <%= (Date.today - 2.days).to_s %>

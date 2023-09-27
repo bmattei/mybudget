@@ -1,0 +1,9 @@
+<div class="table-cell overflow-y-scroll px-2 py-1"
+     data-controller="edit"
+     data-action="click->edit#editReference blur->edit#saveReference"
+     data-model="<%= model %>"
+     data-id="<%= id %>"
+     data-field="<%= field %>">
+  <%= content_tag :span, references.find { |r| r.id == content }&.name || default_display, class: 'block' %>
+  <%= select_tag "#{model}[#{field}]", options_from_collection_for_select(references, "id", "name", content), prompt: 'Select an Option', class: 'hidden', data: { action: 'blur->edit#saveReference' } %>
+</div>
